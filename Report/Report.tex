@@ -8,6 +8,7 @@
 \renewcommand{\epigraphrule}{0pt} % No horizontal rule
 \usepackage[most]{tcolorbox}
 \usepackage{amsmath, amssymb, amsthm}
+\usepackage{bbm}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage[utf8]{inputenc}
@@ -142,5 +143,101 @@
 \maketitle
 
 \tableofcontents
+
+\chapter*{The Lighthouse Problem}
+
+\section*{The Setup}
+
+\indent A lighthouse that is at a distance $\beta$ from the coast is at position $\alpha$ along it. The lighthouse emits flashes at random angles $\theta$, following a uniform distribution. The flashes can be considered narrow and, provided $\pi/2 < \theta < \pi/2$, intersect the coastline at a single point. Detectors on the coastline record only the flashes' locations $x_{k}$ (where $k = 1, 2,\dots, N$ ) for N flashes received. The setup is illustrated in Figure \ref{fig:lighthouse}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/lighthouse diagram.png}
+\caption{The lighthouse problem setup}
+\label{fig:lighthouse}
+\end{figure}
+
+
+The goal of this project is to find the location of the lighthouse from the recorded data ${x_{k}}$.
+
+\subsection*{(i) The Geometry of the Problem}
+
+As stated above, only the distribution of the flashes' angle, $\theta$, is known. However, the observed data obtained is the location of the flashes on the coastline, $x_{k}$. Thus, it is worth considering what the relationship is between the angle of the flash and the location of the flash on the coastline, expressed in terms of the unknown lightouse location parameters $\alpha$ and $\beta$. Using trigonometry, the following relationship can be derived:
+
+\begin{equation}
+    x = \alpha + \beta \tan(\theta) \iff \theta = \tan^{-1}\left(\frac{x - \alpha}{\beta}\right)
+\end{equation}
+
+\subsection*{(ii) The Likelihood Function}
+
+In addition to the relationship above, the probability distribution of the flashes' angles is known to be uniform. Thus, the probability of a single flash to have the angle $\theta$ is given by:
+
+\begin{equation}
+    \theta \sim U(-\pi/2, \pi/2)
+\end{equation}
+
+\begin{equation}
+    P(\theta) = \mathbbm{1}_{(-\pi/2, \pi/2)}(\theta) \times \frac{1}{\pi} = \begin{cases} \frac{1}{\pi}, & \text{if } -\frac{\pi}{2} < \theta < \frac{\pi}{2} \\ 0, & \text{otherwise} \end{cases}
+\end{equation}
+
+Now, using the trigonometric relationship between $\theta$ and $x$ derived in (1), a change of variable is conducted to find the probability distribution of the flashes' locations on the coastline, $x$. Here, this will be considered as the likelihood of a single flash to be observed at location $x$ given the lighthouse location parameters $\alpha$ and $\beta$. For this 1-D case, the change of variable can be written as:
+
+\begin{equation}
+    \mathcal{L}_{x}(x|\alpha, \beta) = \mathcal{L}_{\theta}(\theta) \times \left| \frac{d\theta}{dx} \right|
+\end{equation}
+
+$\mathcal{L}_{\theta}(\theta)$ is the probability distribution of the flashes' angles, which is given in Equation (3). Since the angle $\theta$ must be such that $-\pi/2 < \theta < \pi/2$ for the flash to be observed on the coastline, $\mathcal{L}_{\theta}(\theta)$ can be set to $1/\pi$. The dereivative term is given by:
+
+\begin{equation}
+    \frac{d\theta}{dx} = \frac{d}{dx} (\tan^{-1}\left(\frac{x - \alpha}{\beta}\right) )
+\end{equation}
+
+Using the chain rule, the derivative can be found to be:
+
+\begin{equation}
+    \frac{d\theta}{dx} = \frac{1}{1 + \left(\frac{x - \alpha}{\beta}\right)^{2}} \times \frac{1}{\beta}
+\end{equation}
+
+With some algebraic manipulation, this can be re-arranged as:
+
+\begin{equation}
+    \frac{d\theta}{dx} = \frac{\beta}{\beta^{2} + (x - \alpha)^{2}}
+\end{equation}
+
+Thus the likelihood for a single flash to be observed at location $x$ given the lighthouse location parameters $\alpha$ and $\beta$ is:
+
+\begin{equation}
+    \mathcal{L}_{x}(x|\alpha, \beta) = \frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x - \alpha)^{2}} 
+\end{equation}
+
+as required.
+
+\subsection*{(iii) Frequentist Claim}
+
+A frequentist colleague claims the most likely location, $\hat{x}$, for any flash to be received is given by the parameter $\alpha$, the location of the lighthouse along the coastline. They also suggest using the sample mean to estimate the $\alpha$ parameter. This turns out to be a bad estimator. First, the $hat{x} = \alpha$ claim. $hat_{x}$ is the location for which the likelihood in Eq. (8) is maximised. This is found by taking the derivative of the likelihood with respect to $x$ and setting it to zero. This gives:
+
+\begin{equation}
+    \frac{d\mathcal{L}_{x}(x|\alpha, \beta)}{dx} = 0 \iff \frac{d}{dx} \left(\frac{\beta}{\beta^{2} + (x - \alpha)^{2}}\right) = 0
+\end{equation}
+
+\begin{equation}
+    -\frac{1}{\pi} \beta (2x - 2\alpha)\frac{1}{\beta^{4} + 2\beta^{2}(x - \alpha)^{2} + (x - \alpha)^{4}} = 0
+\end{equation}
+
+This is satisfied when $x = \alpha$, as claimed. Thus, the frequentist's claim is accurate for the value of the most likely flash location. However, estimating the value of $\alpha$ with the sample mean is not good. A better estimation method can be used, the Maximum Likelihood Estimate (MLE) method. The aim is to find the value of $\alpha$ that maximises the likelihood derived in Eq. (8), based on the observed sample ${x_k}$ ($k = 1, 2,\dots, N$).  This is done by taking the derivative of the likelihood with respect to $\alpha$ and setting it to zero. However, for simplicity in derivation and computation, the log-likelihood is used instead. 
+
+\begin{equation}
+    \hat{\alpha}_{MLE} = \arg \max_{\alpha} \prod_{k=1}^{N}
+\end{equation}
+
+
+\subsection*{(iv) Priors for $\alpha$ and $\beta$}
+
+Uniform for $\alpha$ and $\beta$. cuz it makes sense.
+
+\subsection*{(v) }
+
+
+
 
 \end{document}
