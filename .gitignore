@@ -5,3 +5,6 @@ Report/*
 
 Plots/*
 !Plots/lighthouse diagram.png
+
+src/test_area.ipynb
+src/__pycache__/
