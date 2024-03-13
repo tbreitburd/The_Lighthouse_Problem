@@ -13,7 +13,10 @@ contains a function to plot the lighthouse Cauchy distribution.
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import scipy.stats as stats
+import seaborn as sns
+import pandas as pd
+import os
 
 # ---------------------------------
 # General functions
@@ -110,6 +113,47 @@ def log_posterior_v(param):
     return log_likelihood_v(param) + log_prior_v(param, alpha_lim, beta_lim)
 
 
+def Metroplis_Hastings(nsteps, ndim, log_posterior, cov, param_init):
+    """!@brief Run the Metropolis-Hastings algorithm
+
+    @details This function takes in the number of steps, the number of dimensions,
+    the log posterior, the covariance matrix, and the initial parameters, and
+    returns the chain of samples and the acceptance fraction.
+
+    @param nsteps The number of steps
+    @param ndim The number of dimensions
+    @param log_posterior The log posterior
+    @param cov The covariance matrix
+    @param param_init The initial parameters
+
+    @return The chain of samples and the acceptance fraction
+    """
+
+    chain = np.zeros((nsteps, 1, ndim))  # Array to store the chain
+    chain[0, 0] = param_init  # Starting point of the chain
+    num_accept = 0  # Set number of accepted samples
+
+    for i in range(nsteps - 1):
+        param_current = chain[i, 0]  # Current position
+        Q = stats.multivariate_normal(param_current, cov)  # Poposal distribution
+        param_proposed = Q.rvs()  # Proposed position
+        log_a = log_posterior(param_proposed) - log_posterior(
+            param_current
+        )  # Acceptance ratio
+        u = np.random.uniform()  # Uniform random variable
+        if np.log(u) < log_a:  # Acceptance condition
+            param_new = param_proposed  # ACCEPT
+            num_accept += 1  # Count the numnber of accepted samples
+        else:
+            param_new = param_current  # REJECT, stay in the same position
+        chain[i + 1, 0] = param_new  # Store the new position in the chain
+
+    # Calculate the acceptance fraction
+    accept_frac = num_accept / nsteps
+
+    return chain, accept_frac
+
+
 # ---------------------------------
 # Plotting functions
 # ---------------------------------
@@ -133,4 +177,125 @@ def plot_lighthouse_cauchy(alpha, beta, x):
     plt.ylabel("Probability density")
     plt.title("Lighthouse Cauchy distribution")
     plt.legend()
+
+    # Save the plot
+    project_dir = os.path.dirname(os.getcwd())
+    plot_dir = os.path.join(project_dir, "Plots")
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    plot_path = os.path.join(plot_dir, "lighthouse_cauchy_distribution.png")
+    plt.savefig(plot_path)
     plt.show()
+
+
+def plot_lighthouse(flashes, lighthouse_location):
+    """!@brief Plot the lighthouse problem
+
+    @details This function takes in the observed position of the flashes
+    and a hypothetical location of the lighthouse,
+    and plots the lighthouse problem.
+
+    @param flashes The observed position of the flashes
+    @param lighthouse_location The hypothetical location of the lighthouse
+
+    @return The plot of the lighthouse problem
+    """
+
+    # Plot the sea and coast
+    plt.fill_betweenx(
+        y=np.linspace(-10, 10, 1000),
+        x1=np.min(flashes) - 10,
+        x2=np.max(flashes) + 10,
+        color="orange",
+        alpha=0.6,
+        where=(np.linspace(-10, 10, 1000) < 0.015),
+    )
+    plt.fill_betweenx(
+        y=np.linspace(-10, 10, 1000),
+        x1=np.min(flashes) - 10,
+        x2=np.max(flashes) + 10,
+        color="blue",
+        alpha=0.5,
+        where=(np.linspace(-10, 10, 1000) > -0.01),
+    )
+
+    # Plot observed flash locations
+    plt.scatter(
+        flashes,
+        np.zeros_like(flashes),
+        marker="*",
+        color="grey",
+        s=90,
+        label="Observed Flashes",
+    )
+
+    # Plot the lighthouse
+    plt.scatter(
+        lighthouse_location[0],
+        lighthouse_location[1],
+        marker="o",
+        s=150,
+        color="red",
+        label="Lighthouse",
+    )
+
+    # Plot lines connecting flashes to the lighthouse location
+    for flash in flashes:
+        plt.plot(
+            [flash, lighthouse_location[0]],
+            [0, lighthouse_location[1]],
+            linestyle="--",
+            color="yellow",
+            alpha=0.5,
+        )
+
+    plt.grid(alpha=0.3)
+
+    # Set labels and legend
+    plt.xlim([np.min(flashes) - 10, np.max(flashes) + 10])
+    plt.ylim([-0.05, lighthouse_location[1] + 0.5 * lighthouse_location[1]])
+    plt.xlabel("Flash Locations")
+    plt.ylabel("Distance from Coastline")
+    plt.legend()
+
+    # Save the plot
+    project_dir = os.path.dirname(os.getcwd())
+    plot_dir = os.path.join(project_dir, "Plots")
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    plot_path = os.path.join(plot_dir, "lighthouse_flashes_diagram.png")
+    plt.savefig(plot_path)
+    plt.show()
+
+    # Show the plot
+    plt.show()
+
+
+def plot_corner(chain, algorithm):
+    """!@brief Plot the corner plot of the chain
+
+    @details This function takes in the chain of samples from the chosen algorithm,
+    and plots the corner plot of the chain.
+
+    @param chain The chain of samples
+    @param algorithm The chosen algorithm
+
+    @return The corner plot of the chain
+    """
+
+    # Change chain to pandas dataframe
+    chain = chain.reshape(-1, 2)
+    chain = pd.DataFrame(chain, columns=["alpha", "beta"])
+
+    # Plot the corner plot
+    fig = sns.pairplot(chain, kind="hist", plot_kws={"bins": 20}, diag_kws={"bins": 20})
+
+    # Save the plot
+    project_dir = os.path.dirname(os.getcwd())
+    plot_dir = os.path.join(project_dir, "Plots")
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    plot_path = os.path.join(plot_dir, "corner_plot_" + algorithm + ".png")
+    plt.savefig(plot_path)
+    plt.show()
+    return fig
