@@ -22,6 +22,20 @@ import os
 # General functions
 # ---------------------------------
 
+path = "lighthouse_flash_data.txt"
+
+# Get the parent directory of the current script
+proj_dir = os.getcwd()
+data_path = os.path.join(proj_dir, path)
+
+# Read the data
+data = np.loadtxt(data_path)
+flash_locs = data[:, 0]
+
+# Set the limits for alpha and beta
+alpha_lim = 100
+beta_lim = 100
+
 
 def lighthouse_cauchy(alpha, beta, x):
     """!@brief Calculate the lighthouse Cauchy distribution
@@ -185,7 +199,7 @@ def plot_lighthouse_cauchy(alpha, beta, x):
         os.makedirs(plot_dir)
     plot_path = os.path.join(plot_dir, "lighthouse_cauchy_distribution.png")
     plt.savefig(plot_path)
-    plt.show()
+    plt.close()
 
 
 def plot_lighthouse(flashes, lighthouse_location):
@@ -265,10 +279,7 @@ def plot_lighthouse(flashes, lighthouse_location):
         os.makedirs(plot_dir)
     plot_path = os.path.join(plot_dir, "lighthouse_flashes_diagram.png")
     plt.savefig(plot_path)
-    plt.show()
-
-    # Show the plot
-    plt.show()
+    plt.close()
 
 
 def plot_corner(chain, algorithm):
@@ -297,5 +308,5 @@ def plot_corner(chain, algorithm):
         os.makedirs(plot_dir)
     plot_path = os.path.join(plot_dir, "corner_plot_" + algorithm + ".png")
     plt.savefig(plot_path)
-    plt.show()
+    plt.close()
     return fig

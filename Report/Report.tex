@@ -15,7 +15,7 @@
 \usepackage{hyperref} % Added for hyperlinks
 \usepackage{listings} % Added for code listings
 \usepackage{color}    % Added for color definitions
-\usepackage[super]{nth} 
+\usepackage[super]{nth}
 \usepackage{fancyhdr}
 \usepackage{tikz}
 \usepackage{cite}
@@ -71,21 +71,21 @@
 
 % Setup for code listings
 \lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
+    backgroundcolor=\color{backcolour},
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
     showstringspaces=false,
-    showtabs=false,                  
+    showtabs=false,
     tabsize=2
 }
 
@@ -138,7 +138,7 @@
 \author{CRSiD: tmb76}
 \date{University of Cambridge}
 
-\begin{document} 
+\begin{document}
 
 \maketitle
 
@@ -207,7 +207,7 @@ With some algebraic manipulation, this can be re-arranged as:
 Thus the likelihood for a single flash to be observed at location $x$ given the lighthouse location parameters $\alpha$ and $\beta$ is:
 
 \begin{equation}
-    \mathcal{L}_{x}(x|\alpha, \beta) = \frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x - \alpha)^{2}} 
+    \mathcal{L}_{x}(x|\alpha, \beta) = \frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x - \alpha)^{2}}
 \end{equation}
 
 as required.
@@ -217,25 +217,40 @@ as required.
 A frequentist colleague claims the most likely location, $\hat{x}$, for any flash to be received is given by the parameter $\alpha$, the location of the lighthouse along the coastline. They also suggest using the sample mean to estimate the $\alpha$ parameter. This turns out to be a bad estimator. First, the $hat{x} = \alpha$ claim. $hat_{x}$ is the location for which the likelihood in Eq. (8) is maximised. This is found by taking the derivative of the likelihood with respect to $x$ and setting it to zero. This gives:
 
 \begin{equation}
-    \frac{d\mathcal{L}_{x}(x|\alpha, \beta)}{dx} = 0 \iff \frac{d}{dx} \left(\frac{\beta}{\beta^{2} + (x - \alpha)^{2}}\right) = 0
+    \left. \frac{d\mathcal{L}_{x}(x|\alpha, \beta)}{dx} \right|_{x = \hat{x}} = 0 \iff \left. \frac{d}{dx} \left(\frac{\beta}{\beta^{2} + (x - \alpha)^{2}}\right) \right|_{x = \hat{x}} = 0
 \end{equation}
 
 \begin{equation}
-    -\frac{1}{\pi} \beta (2x - 2\alpha)\frac{1}{\beta^{4} + 2\beta^{2}(x - \alpha)^{2} + (x - \alpha)^{4}} = 0
+    -\frac{1}{\pi} \beta (2\hat{x} - 2\alpha)\frac{1}{\beta^{4} + 2\beta^{2}(\hat{x} - \alpha)^{2} + (\hat{x} - \alpha)^{4}} =
 \end{equation}
-
-This is satisfied when $x = \alpha$, as claimed. Thus, the frequentist's claim is accurate for the value of the most likely flash location. However, estimating the value of $\alpha$ with the sample mean is not good. A better estimation method can be used, the Maximum Likelihood Estimate (MLE) method. The aim is to find the value of $\alpha$ that maximises the likelihood derived in Eq. (8), based on the observed sample ${x_k}$ ($k = 1, 2,\dots, N$).  This is done by taking the derivative of the likelihood with respect to $\alpha$ and setting it to zero. However, for simplicity in derivation and computation, the log-likelihood is used instead. 
+\newline
+This is satisfied when $\hat{x} = \alpha$, as claimed. Thus, the frequentist's claim is accurate for the value of the most likely flash location. However, estimating the value of $\alpha$ with the sample mean is not good. To show this, we compare it with the Maximum Likelihood Estimate (MLE) method. The aim is to find the value of $\alpha$ that maximises the likelihood derived in Eq. (8), based on the observed sample ${x_k}$ ($k = 1, 2,\dots, N$). This means now having the likelihood being the product of individula likelihoods for all values of ${x_k}$. This is done by taking the derivative of the likelihood with respect to $\alpha$ and setting it to zero. However, for simplicity in derivation and computation, the log-likelihood is used instead.
 
 \begin{equation}
-    \hat{\alpha}_{MLE} = \arg \max_{\alpha} \prod_{k=1}^{N}
+    \hat{\alpha}_{MLE} = \arg \max_{\alpha} \ln(\prod_{k=1}^{N}  \mathcal{L}_{x}(x_{k}|\alpha, \beta)) = \arg \max_{\alpha} \sum_{k=1}^{N} \ln(\frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x_{k} - \alpha)^{2}})
 \end{equation}
+
+\begin{equation}
+    \hat{\alpha}_{MLE} = \arg \max_{\alpha} \sum_{k=1}^{N} \ln(\frac{\beta}{\pi}) + \ln(\frac{1}{(\beta^{2} + (x_{k} - \alpha)^{2})})
+\end{equation}
+
+\begin{equation}
+    \left. \frac{d}{d\alpha} \left( \sum_{k=1}^{N} \ln(\frac{\beta}{\pi}) + \ln(\frac{1}{(\beta^{2} + (x_{k} - \alpha)^{2})}) \right) \right|_{\alpha = \hat{\alpha}_{MLE}} = 0
+\end{equation}
+
+\begin{equation}
+    \sum_{k=1}^{N} \left. \frac{(2\alpha - 2x_{k})}{(\beta^{2} + (x_{k} - \alpha)^{2})} \right|_{\alpha = \hat{\alpha}_{MLE}} = 0
+\end{equation}
+\newline
+To get an estimate of $\hat{\alpha}_{MLE}$, the above equation needs to be rearranged to isolate $\alpha$. However, this is difficult to do analytically. More importantly, the overarching issue is that the Cauchy distribution does not follow the Central Limit Theorem. This is shown in the fact that the distribution of the sample mean of the Cauchy distribution is itself a Cauchy distribution, no matter the sample size:
+
 
 
 \subsection*{(iv) Priors for $\alpha$ and $\beta$}
 
 Uniform for $\alpha$ and $\beta$. cuz it makes sense.
 
-\subsection*{(v) }
+\subsection*{(v) Stochastic Sampling }
 
 
 

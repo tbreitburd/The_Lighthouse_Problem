@@ -1,7 +1,13 @@
 import numpy as np
 import zeus
 import os
-from . import funcs
+import funcs
+
+# Ignore seaborn FutureWarnings
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 
 print("---------------------------------")
 print("----------- Part V --------------")
@@ -16,8 +22,7 @@ print("---------------------------------")
 path = "lighthouse_flash_data.txt"
 
 # Get the parent directory of the current script
-src_dir = os.getcwd()
-proj_dir = os.path.dirname(src_dir)
+proj_dir = os.getcwd()
 data_path = os.path.join(proj_dir, path)
 
 # Read the data
@@ -79,6 +84,14 @@ print("tau_MH = ", tau_MH)
 
 # Plot the distribution of the samples in a corner plot
 funcs.plot_corner(chain_MH, "MH")
+
+# Get estimates of alpha and beta
+alpha_est_MH, beta_est_MH = np.mean(chain_MH, axis=0)[0]
+alpha_sig_MH, beta_sig_MH = np.std(chain_MH, axis=0)[0]
+
+print("The estimated alpha and beta are:")
+print("alpha_MH = ", alpha_est_MH, " ± ", alpha_sig_MH)
+print("beta_MH = ", beta_est_MH, " ± ", beta_sig_MH)
 
 # ---------------------------------
 # Using the zeus sampler (ensemble sampler)
