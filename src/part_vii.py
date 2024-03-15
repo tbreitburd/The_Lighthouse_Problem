@@ -11,7 +11,7 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
 print("---------------------------------")
-print("----------- Part V --------------")
+print("----------- Part VII --------------")
 print("---------------------------------")
 
 # -------------------------------------------------------------
@@ -29,16 +29,18 @@ data_path = os.path.join(proj_dir, path)
 # Read the data
 data = np.loadtxt(data_path)
 flash_locs = data[:, 0]
+flash_intensities = data[:, 1]
 
 print("---------------------------------")
 print("---------------------------------")
 print("(a) The Data")
-print("The observed flashes have locations:")
-print(flash_locs)
+print("The observed flashes have locations and intensities:")
+print(data)
 
 # Set the limits for alpha and beta
 alpha_lim = 100
 beta_lim = 100
+intensity_lim = 50
 
 # Plot the data as a diagram of the lighthouse and the flashes
 # for a hypothetical lighthouse at position alpha = 0 and beta = 0.1
@@ -48,15 +50,6 @@ funcs.plot_lighthouse(flash_locs, (0, 0.1))
 # again for hypothetical alpha = 0 and beta = 0.1
 x = np.linspace(-10, 10, 1000)
 funcs.plot_lighthouse_cauchy(0, 2, x)
-
-# ---------------------------------
-# Cauchy distribution and CLT
-# ---------------------------------
-
-# Using the code from https://github.com/PessoaP/blog/blob/master/Lighthouse/Lighthouse.ipynb
-# to demonstrate the Central Limit Theorem for the Cauchy distribution
-
-funcs.cauchy_clt(2, 2, 10000)
 
 # --------------------------------------------------------------
 # --------------------------------------------------------------
@@ -80,16 +73,17 @@ print(
 )
 
 
-nsteps, ndim = 100000, 2  # Define the number of steps and the number of dimensions
+nsteps, ndim = 100000, 3  # Define the number of steps and the number of dimensions
 init = [
     np.random.uniform(-alpha_lim, alpha_lim),
     np.random.uniform(0, beta_lim),
+    np.random.uniform(0.001, intensity_lim),
 ]  # Starting point of the chain
-cov = np.array([[1.5, 0.0], [0.0, 1.5]])
+cov = np.array([[1.5, 0.0, 0.0], [0.0, 1.5, 0.0], [0.0, 0.0, 1.5]])
 
 # Run the Metropolis-Hastings algorithm
 chain_MH, accept_frac_MH = funcs.Metropolis_Hastings(
-    nsteps, ndim, funcs.log_posterior_v, cov, init
+    nsteps, ndim, funcs.log_posterior_vii, cov, init
 )
 
 print("The acceptance fraction is for the Metropolis Hastings algorithm is:")
@@ -104,8 +98,12 @@ burn_in = 1000
 chain_MH = chain_MH[burn_in:, :]
 
 # Get the autocorrelation time, tau, for the chain
-taus_MH = integrated_time(chain_MH[:, 0]), integrated_time(chain_MH[:, 1])
-print("Autocorrelation:", taus_MH[0], taus_MH[1])
+taus_MH = (
+    integrated_time(chain_MH[:, 0]),
+    integrated_time(chain_MH[:, 1]),
+    integrated_time(chain_MH[:, 2]),
+)
+print("Autocorrelation:", taus_MH[0], taus_MH[1], taus_MH[2])
 
 tau_MH = max(taus_MH)
 print("tau_MH = ", tau_MH)
@@ -120,13 +118,17 @@ nsteps = 10000
 # Run the Metropolis-Hastings algorithm
 chains_MH = np.zeros((nsteps, nchains, ndim))
 for i in range(nchains):
-    init = [np.random.uniform(-alpha_lim, alpha_lim), np.random.uniform(0, beta_lim)]
+    init = [
+        np.random.uniform(-alpha_lim, alpha_lim),
+        np.random.uniform(0, beta_lim),
+        np.random.uniform(0.001, intensity_lim),
+    ]
     chains_MH[:, i, :], _ = funcs.Metropolis_Hastings(
-        nsteps, ndim, funcs.log_posterior_v, cov, init
+        nsteps, ndim, funcs.log_posterior_vii, cov, init
     )
 
 # Calculate the Gelman-Rubin statistic
-R_MH = funcs.gelman_rubin(chains_MH, 100, 10, ndim)
+R_MH = funcs.gelman_rubin(chains_MH, 100, 10, 3)
 
 # Plot the Gelman-Rubin statistic
 funcs.plot_gelman_rubin(R_MH, ndim, "MH")
@@ -141,12 +143,14 @@ print(chain_MH.shape)
 funcs.plot_corner(chain_MH, ndim, "MH")
 
 # Get estimates of alpha and beta
-alpha_est_MH, beta_est_MH = np.mean(chain_MH, axis=0)
-alpha_sig_MH, beta_sig_MH = np.std(chain_MH, axis=0)
+alpha_est_MH, beta_est_MH, Intensity_0_est_MH = np.mean(chain_MH, axis=0)
+alpha_sig_MH, beta_sig_MH, Intensity_0_sig_MH = np.std(chain_MH, axis=0)
 
-print("The estimated alpha and beta are:")
+print("The estimated alpha, beta, and intensity are:")
 print("alpha_MH = ", alpha_est_MH, " ± ", alpha_sig_MH)
 print("beta_MH = ", beta_est_MH, " ± ", beta_sig_MH)
+print("Intensity_0_MH = ", Intensity_0_est_MH, " ± ", Intensity_0_sig_MH)
+
 
 # ---------------------------------
 # Using the zeus sampler (ensemble sampler)
@@ -155,20 +159,26 @@ print("        ")
 print("------ Zeus Slice Sampling ------")
 print("Using the zeus sampler, with slice sampling:")
 
-nsteps, nwalkers, ndim = 10000, 10, 2
+np.random.seed(42)
+
+nsteps, nwalkers, ndim = 10000, 10, 3
 start = np.array(
-    [np.random.uniform(-alpha_lim, alpha_lim, 10), np.random.uniform(0, beta_lim, 10)]
+    [
+        np.random.uniform(-alpha_lim, alpha_lim, 10),
+        np.random.uniform(0, beta_lim, 10),
+        np.random.uniform(0.001, intensity_lim, 10),
+    ]
 ).T
 # start = np.abs(np.random.randn(nwalkers, ndim))
 
-sampler_SS = zeus.EnsembleSampler(nwalkers, ndim, funcs.log_posterior_v)
+sampler_SS = zeus.EnsembleSampler(nwalkers, ndim, funcs.log_posterior_vii)
 
 sampler_SS.run_mcmc(start, nsteps)
 chain_SS = sampler_SS.get_chain()
 
 
 # Calculate the Gelman-Rubin statistic
-R_SS = funcs.gelman_rubin(chain_SS, 100, 10, ndim)
+R_SS = funcs.gelman_rubin(chain_SS, 100, 10, 3)
 
 # Plot the Gelman-Rubin statistic
 funcs.plot_gelman_rubin(R_SS, ndim, "SS")
@@ -198,14 +208,17 @@ print("tau_SS = ", tau_SS)
 # Thin the chain
 chain_SS = chain_SS[:: int(tau_SS), :]
 chain_SS = chain_SS.reshape(-1, 2)
+chain_SS = chain_SS.reshape(-1, ndim)
 
 # Get estimates of alpha and beta
-alpha_est_SS, beta_est_SS = np.mean(chain_SS, axis=0)
-alpha_sig_SS, beta_sig_SS = np.std(chain_SS, axis=0)
+alpha_est_SS, beta_est_SS, Intensity_0_est_SS = np.mean(chain_SS, axis=0)
+alpha_sig_SS, beta_sig_SS, Intensity_0_sig_SS = np.std(chain_SS, axis=0)
 
-print("The estimated alpha and beta are:")
+
+print("The estimated alpha, beta, and intensity are:")
 print("alpha_SS = ", alpha_est_SS, " ± ", alpha_sig_SS)
 print("beta_SS = ", beta_est_SS, " ± ", beta_sig_SS)
+print("Intensity_0_SS = ", Intensity_0_est_SS, " ± ", Intensity_0_sig_SS)
 
 # Plot the distribution of the samples in a corner plot
 funcs.plot_corner(chain_SS, ndim, "SS")

@@ -35,6 +35,7 @@ flash_locs = data[:, 0]
 # Set the limits for alpha and beta
 alpha_lim = 100
 beta_lim = 100
+intensity_0_lim = 50
 
 
 def lighthouse_cauchy(alpha, beta, x):
@@ -71,9 +72,6 @@ def log_likelihood_v(param):
     # Calculate the likelihood
     alpha, beta = param
     global flash_locs
-    # likelihood = 0
-    # for x in flash_locs:
-    #    likelihood += (np.log(beta) - np.log(np.pi) - (np.log(beta**2 + (x - alpha)**2)))
 
     x = flash_locs
     epsilon = 1e-10
@@ -144,7 +142,7 @@ def Metropolis_Hastings(nsteps, ndim, log_posterior, cov, param_init):
     """
 
     chain = np.zeros((nsteps, ndim))  # Array to store the chain
-    chain[0] = param_init  # Starting point of the chain
+    chain[0, :] = param_init  # Starting point of the chain
     num_accept = 0  # Set number of accepted samples
 
     for i in range(nsteps - 1):
@@ -191,7 +189,7 @@ def clean_chain(chain, burn_in, tau):
     return chain
 
 
-def gelman_rubin(chains, window_size=100, step_size=10):
+def gelman_rubin(chains, window_size, step_size, ndim):
     """!@brief Calculate the Gelman-Rubin statistic
 
     @details This function takes a number of chains fron the same algorithm started at
@@ -200,6 +198,9 @@ def gelman_rubin(chains, window_size=100, step_size=10):
     between the chains and the variance within the chains.
 
     @param chains The chains of samples
+    @param window_size The size of the window
+    @param step_size The step size
+    @param ndim The number of dimensions
 
     @return The Gelman-Rubin statistic
     """
@@ -208,9 +209,8 @@ def gelman_rubin(chains, window_size=100, step_size=10):
     nsamples = chains.shape[0]
 
     # Number of chains
-    nchains = chains.shape[2]
-
-    R_hat = np.zeros(((nsamples - window_size + 1) // step_size, 2))
+    nchains = chains.shape[1]
+    R_hat = np.zeros(((nsamples - window_size + 1) // step_size, ndim))
 
     # Use a rolling window to calculate the Gelman-Rubin statistic
     for idx, i in enumerate(range(0, nsamples - window_size + 1, step_size)):
@@ -220,12 +220,11 @@ def gelman_rubin(chains, window_size=100, step_size=10):
         chain_means = np.mean(chains[indices, :, :], axis=0)
         mean = np.mean(chain_means, axis=0)
         B = (window_size / (nchains - 1)) * np.sum((chain_means - mean) ** 2, axis=0)
-
         # Calculate the within-chain variance
         W = (
             np.sum(
                 [
-                    np.sum((chains[indices, :, i] - chain_means[:, i]) ** 2)
+                    np.sum((chains[indices, i, :] - chain_means[i, :]) ** 2)
                     / (window_size - 1)
                     for i in range(nchains)
                 ]
@@ -239,6 +238,166 @@ def gelman_rubin(chains, window_size=100, step_size=10):
         ) / (W)
 
     return R_hat
+
+
+def cauchy_clt(alpha, beta, sample_size):
+    """!@brief Plot the central limit theorem for the Cauchy distribution
+
+    @details This function takes in the parameters alpha and beta, and the
+    sample size, and plots the central limit theorem for the Cauchy distribution.
+    The code was obtained from Pedro Pessoa's blog:
+    https://github.com/PessoaP/blog/tree/master/Lighthouse
+
+    @param alpha The position of the lighthouse
+    @param beta The scale of the lighthouse
+    @param sample_size The sample size, minimum 10,000
+
+    @return The plot of the central limit theorem for the Cauchy distribution
+    """
+
+    # Uniformly sample theta from -pi/2 to pi/2
+    theta = np.pi * (np.random.rand(sample_size) - 1 / 2)
+
+    # Calculate the sample x
+    sample = alpha + beta * np.tan(theta)  # sample x
+
+    fig, ax = plt.subplots(1, figsize=(8, 4))
+    n = [10, 31, 100, 316, 1000, 3162, 10000]
+    ax.axvline(2, color="y", label="True Alpha")
+
+    label = True
+    for lim in n:
+        mean = np.mean(sample[:lim])
+        sig = np.std(sample[:lim]) / np.sqrt(lim)
+        confMS = (mean - sig, mean + sig)
+        ax.scatter(mean, lim, color="b", label="Mean")
+        ax.plot(confMS, lim * np.ones(2), lw=4, color="r", alpha=0.5, label="Interval")
+
+        if label:
+            fig.legend(loc=8, bbox_to_anchor=(0.25, 0.2))
+            label = False
+
+    ax.set_title("Mean and standard deviation", fontsize=17)
+    ax.set_yscale("log")
+    ax.set_ylabel("# of datapoints", fontsize=16)
+    ax.tick_params(axis="y", labelsize=14)
+    ax.set_xlabel(r"Alpha", fontsize=15)
+    fig.tight_layout()
+
+    # Save the plot
+    project_dir = os.getcwd()
+    plot_dir = os.path.join(project_dir, "Plots")
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    plot_path = os.path.join(plot_dir, "cauchy_CLT.png")
+    plt.savefig(plot_path)
+    plt.close()
+
+
+def lighthouse_intensity(alpha, beta, intensity_0, x, intensity):
+    """!@brief Calculate the lighthouse Cauchy distribution
+
+    @details This function takes in the parameters alpha and beta, and the
+    position x, and returns the probability density function of the lighthouse
+    Cauchy distribution.
+
+    @param alpha The position of the lighthouse
+    @param beta The scale of the lighthouse
+    @param intensity_0 The intensity of the flash at the lighthouse
+    @param x The position of the flash along the coastline
+    @param intensity The intensity of the observed flash
+
+    @return The probability density function of the lighthouse Cauchy distribution
+    """
+    sigma = 1
+    d_squared = ((x - alpha) ** 2) + (beta**2)
+    denominator = np.sqrt(2 * np.pi * (sigma**2))
+
+    if intensity_0 <= 0:
+        return 0  # Return 0 if intensity_0 is non-positive
+
+    expo_term = -(
+        (np.log(intensity) - np.log(intensity_0) + np.log(d_squared)) ** 2
+    ) / (2 * (sigma**2))
+    pdf = np.exp(expo_term) / denominator
+    return pdf
+
+
+def log_likelihood_vii(param):
+    alpha, beta, intensity_0 = param
+    global data
+    global flash_locs
+    x = flash_locs
+    epsilon = 1e-10
+
+    likelihood = np.sum(
+        [np.log(max(lighthouse_cauchy(alpha, beta, point), epsilon)) for point in x]
+    ) + np.sum(
+        [
+            np.log(
+                max(
+                    lighthouse_intensity(alpha, beta, intensity_0, point, intensity),
+                    epsilon,
+                )
+            )
+            for point, intensity in data
+        ]
+    )
+
+    return likelihood
+
+
+def log_prior_vii(param, alpha_lim, beta_lim, intensity_0_lim):
+    """!@brief Calculate the log prior of the lighthouse Cauchy distribution
+
+    @details This function takes in the parameters alpha and beta, and the
+    limits for alpha and beta, and returns the log prior of the lighthouse
+    Cauchy distribution.
+
+    @param param The parameters alpha and beta
+    @param alpha_lim The limit for alpha
+    @param beta_lim The limit for beta
+
+    @return The log prior of the lighthouse Cauchy distribution
+    """
+
+    alpha, beta, intensity_0 = param
+    # Uniform prior
+    prior_alpha_beta = -np.log(((2 * alpha_lim) * beta_lim))
+    prior_log_intensity = -np.log(intensity_0_lim)
+
+    log_prior = prior_alpha_beta + prior_log_intensity
+
+    if (
+        -alpha_lim < alpha < alpha_lim
+        and 0 < beta < beta_lim
+        and 0 < intensity_0 < intensity_0_lim
+    ):
+        return log_prior
+    else:
+        return -np.inf
+
+
+def log_posterior_vii(param):
+    """!@brief Calculate the log posterior of the lighthouse Cauchy distribution
+
+    @details This function takes in the parameters alpha and beta, and the
+    position x, and returns the log posterior of the lighthouse Cauchy
+    distribution.
+
+    @param param The parameters alpha and beta
+    @param flash_locs The position of the flashes
+
+    @return The log posterior of the lighthouse Cauchy distribution
+    """
+
+    alpha, beta, intensity_0 = param
+    global alpha_lim
+    global beta_lim
+    global intensity_0_lim
+    return log_likelihood_vii(param) + log_prior_vii(
+        param, alpha_lim, beta_lim, intensity_0_lim
+    )
 
 
 # ---------------------------------
@@ -355,21 +514,26 @@ def plot_lighthouse(flashes, lighthouse_location):
     plt.close()
 
 
-def plot_corner(chain, algorithm):
+def plot_corner(chain, ndim, algorithm):
     """!@brief Plot the corner plot of the chain
 
     @details This function takes in the chain of samples from the chosen algorithm,
     and plots the corner plot of the chain.
 
     @param chain The chain of samples
+    @param ndim The number of dimensions
     @param algorithm The chosen algorithm
 
     @return The corner plot of the chain
     """
 
     # Change chain to pandas dataframe
-    chain = chain.reshape(-1, 2)
-    chain = pd.DataFrame(chain, columns=["alpha", "beta"])
+    chain = chain.reshape(-1, ndim)
+    if ndim == 3:
+        columns = ["alpha", "beta", "intensity_0"]
+    else:
+        columns = ["alpha", "beta"]
+    chain = pd.DataFrame(chain, columns=columns)
 
     # Plot the corner plot
     sns.pairplot(chain, kind="hist", plot_kws={"bins": 20}, diag_kws={"bins": 20})
@@ -379,12 +543,15 @@ def plot_corner(chain, algorithm):
     plot_dir = os.path.join(project_dir, "Plots")
     if not os.path.exists(plot_dir):
         os.makedirs(plot_dir)
-    plot_path = os.path.join(plot_dir, "corner_plot_" + algorithm + ".png")
+    if ndim == 3:
+        plot_path = os.path.join(plot_dir, "corner_plot_vii" + algorithm + ".png")
+    else:
+        plot_path = os.path.join(plot_dir, "corner_plot_v" + algorithm + ".png")
     plt.savefig(plot_path)
     plt.close()
 
 
-def plot_chain(chain, nsteps, algorithm):
+def plot_chain(chain, nsteps, ndim, algorithm):
     """!@brief Plot the chain of samples
 
     @details This function takes in the chain of samples from the chosen algorithm,
@@ -392,13 +559,14 @@ def plot_chain(chain, nsteps, algorithm):
 
     @param chain The chain of samples
     @param nsteps The number of steps
+    @param ndim The number of dimensions
     @param algorithm The chosen algorithm
 
     @return The chain of samples
     """
 
     # Plot the chain of samples
-    fig, ax = plt.subplots(2, 1, figsize=(7, 7))
+    fig, ax = plt.subplots(ndim, 1, figsize=(7, 7))
     ax[0].plot(chain[:nsteps, 0], label=r"$\alpha$")
     plt.ylabel("Parameter value")
     ax[0].legend()
@@ -406,6 +574,11 @@ def plot_chain(chain, nsteps, algorithm):
     ax[1].set_xlabel("Chain Step")
     ax[1].set_ylabel("Parameter value")
     ax[1].legend()
+    if ndim == 3:
+        ax[2].plot(chain[:nsteps, 2], label=r"$I_{0}$")
+        ax[2].set_xlabel("Chain Step")
+        ax[2].set_ylabel("Parameter value")
+        ax[2].legend()
     plt.suptitle("Chain of samples")
     plt.tight_layout()
 
@@ -414,22 +587,29 @@ def plot_chain(chain, nsteps, algorithm):
     plot_dir = os.path.join(project_dir, "Plots")
     if not os.path.exists(plot_dir):
         os.makedirs(plot_dir)
-    plot_path = os.path.join(plot_dir, "chain_plot_" + algorithm + ".png")
+    if ndim == 3:
+        plot_path = os.path.join(plot_dir, "chain_plot_vii" + algorithm + ".png")
+    else:
+        plot_path = os.path.join(plot_dir, "chain_plot_v" + algorithm + ".png")
     plt.savefig(plot_path)
     plt.close()
 
 
-def plot_gelman_rubin(R_hat, algorithm):
+def plot_gelman_rubin(R_hat, ndim, algorithm):
     """!@brief Plot the Gelman-Rubin statistic
 
     @details This function takes in the Gelman-Rubin statistic,
     and plots the Gelman-Rubin statistic.
 
+    @param R_hat The Gelman-Rubin statistic
+    @param ndim The number of dimensions
+    @param algorithm The chosen algorithm
+
     @return The Gelman-Rubin statistic
     """
 
     # Plot the Gelman-Rubin statistic
-    fig, ax = plt.subplots(2, 1, figsize=(7, 7))
+    fig, ax = plt.subplots(ndim, 1, figsize=(7, 7))
     ax[0].plot(R_hat[:, 0])
     ax[0].set_xlabel("Window")
     ax[0].set_ylabel("GR for alpha")
@@ -438,6 +618,11 @@ def plot_gelman_rubin(R_hat, algorithm):
     ax[1].set_xlabel("Window")
     ax[1].set_ylabel("GR for beta")
     ax[1].grid()
+    if ndim == 3:
+        ax[2].plot(R_hat[:, 0])
+        ax[2].set_xlabel("Window")
+        ax[2].set_ylabel("GR for intensity_0")
+        ax[2].grid()
     plt.suptitle("Gelman-Rubin statistic")
     plt.tight_layout()
 
@@ -446,6 +631,9 @@ def plot_gelman_rubin(R_hat, algorithm):
     plot_dir = os.path.join(project_dir, "Plots")
     if not os.path.exists(plot_dir):
         os.makedirs(plot_dir)
-    plot_path = os.path.join(plot_dir, "gelman_rubin_plot" + algorithm + ".png")
+    if ndim == 3:
+        plot_path = os.path.join(plot_dir, "gelman_rubin_plot_vii" + algorithm + ".png")
+    else:
+        plot_path = os.path.join(plot_dir, "gelman_rubin_plot_v" + algorithm + ".png")
     plt.savefig(plot_path)
     plt.close()
