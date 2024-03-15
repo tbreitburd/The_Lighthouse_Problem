@@ -2,6 +2,7 @@
 Report/*
 !Report/Report.tex
 !Report/Report.pdf
+!Report/refs.bib
 
 Plots/*
 !Plots/lighthouse diagram.png

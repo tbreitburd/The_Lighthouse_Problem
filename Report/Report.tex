@@ -19,6 +19,7 @@
 \usepackage{fancyhdr}
 \usepackage{tikz}
 \usepackage{cite}
+\usepackage{algpseudocode}
 \usetikzlibrary{shapes.geometric, arrows, positioning}
 
 \tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=red!30]
@@ -92,11 +93,11 @@
 \lstset{style=mystyle}
 
 % Definition of the tcolorbox for definitions
-\newtcolorbox{definitionbox}{
+\newtcolorbox{definitionbox}[1]{
   colback=red!5!white,
   colframe=red!75!black,
   colbacktitle=red!85!black,
-  title=Definition:,
+  title=#1,
   fonttitle=\bfseries,
   enhanced,
 }
@@ -152,7 +153,7 @@
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\textwidth]{../Plots/lighthouse diagram.png}
+\includegraphics[width=0.8\textwidth]{../Plots/lighthouse_diagram.png}
 \caption{The lighthouse problem setup}
 \label{fig:lighthouse}
 \end{figure}
@@ -160,7 +161,7 @@
 
 The goal of this project is to find the location of the lighthouse from the recorded data ${x_{k}}$.
 
-\subsection*{(i) The Geometry of the Problem}
+\section*{(i) The Geometry of the Problem}
 
 As stated above, only the distribution of the flashes' angle, $\theta$, is known. However, the observed data obtained is the location of the flashes on the coastline, $x_{k}$. Thus, it is worth considering what the relationship is between the angle of the flash and the location of the flash on the coastline, expressed in terms of the unknown lightouse location parameters $\alpha$ and $\beta$. Using trigonometry, the following relationship can be derived:
 
@@ -168,7 +169,7 @@ As stated above, only the distribution of the flashes' angle, $\theta$, is known
     x = \alpha + \beta \tan(\theta) \iff \theta = \tan^{-1}\left(\frac{x - \alpha}{\beta}\right)
 \end{equation}
 
-\subsection*{(ii) The Likelihood Function}
+\section*{(ii) The Likelihood Function}
 
 In addition to the relationship above, the probability distribution of the flashes' angles is known to be uniform. Thus, the probability of a single flash to have the angle $\theta$ is given by:
 
@@ -186,7 +187,7 @@ Now, using the trigonometric relationship between $\theta$ and $x$ derived in (1
     \mathcal{L}_{x}(x|\alpha, \beta) = \mathcal{L}_{\theta}(\theta) \times \left| \frac{d\theta}{dx} \right|
 \end{equation}
 
-$\mathcal{L}_{\theta}(\theta)$ is the probability distribution of the flashes' angles, which is given in Equation (3). Since the angle $\theta$ must be such that $-\pi/2 < \theta < \pi/2$ for the flash to be observed on the coastline, $\mathcal{L}_{\theta}(\theta)$ can be set to $1/\pi$. The dereivative term is given by:
+Where $\mathcal{L}_{\theta}(\theta)$ is the probability distribution of the flashe's angles, which is given in Eq (3) as a uniform distribution. Since the angle $\theta$ must be such that $-\pi/2 < \theta < \pi/2$ for the flash to be observed on the coastline, $\mathcal{L}_{\theta}(\theta)$ can be set to $1/\pi$. The derivative term is given by:
 
 \begin{equation}
     \frac{d\theta}{dx} = \frac{d}{dx} (\tan^{-1}\left(\frac{x - \alpha}{\beta}\right) )
@@ -210,24 +211,33 @@ Thus the likelihood for a single flash to be observed at location $x$ given the 
     \mathcal{L}_{x}(x|\alpha, \beta) = \frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x - \alpha)^{2}}
 \end{equation}
 
-as required.
+as required. Below is an example plot of the likelihood function for hypothetical values of $\alpha = 0$ and $\beta = 1$.
 
-\subsection*{(iii) Frequentist Claim}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/lighthouse_cauchy_distribution.png}
+\caption{Cauchy distribution plot, for hypothetical values of $\alpha = 0$ and $\beta = 1$}
+\label{fig:cauchy_distribution}
+\end{figure}
 
-A frequentist colleague claims the most likely location, $\hat{x}$, for any flash to be received is given by the parameter $\alpha$, the location of the lighthouse along the coastline. They also suggest using the sample mean to estimate the $\alpha$ parameter. This turns out to be a bad estimator. First, the $hat{x} = \alpha$ claim. $hat_{x}$ is the location for which the likelihood in Eq. (8) is maximised. This is found by taking the derivative of the likelihood with respect to $x$ and setting it to zero. This gives:
+Fig. \ref{fig:cauchy_distribution} shows the Cauchy distribution, which is a heavy-tailed distribution. This means that the likelihood stays non-negligible for values of x very different from $\alpha$. This is a result of the trigonometric relationship between $\theta$ and $x$ in Eq. (1). When the angle $\theta$ is close to $\pm \pi/2$, small changes in $\theta$ can result in large changes in $x$. And since the angle $\theta$ is uniformly distributed, the likelihood of observing a flash at a location $x$ far from $\alpha$ is non-negligible.
+
+\section*{(iii) Frequentist Claim}
+
+A frequentist colleague claims the most likely location, $\hat{x}$, for any flash to be received is given by the parameter $\alpha$, the location of the lighthouse along the coastline. They also suggest using the sample mean to estimate the $\alpha$ parameter. First, the $\hat{x} = \alpha$ claim. $\hat{x}$ is the location for which the likelihood in Eq. (8) is maximised. This is found by taking the derivative of the likelihood with respect to $x$ and setting it to zero. This gives:
 
 \begin{equation}
     \left. \frac{d\mathcal{L}_{x}(x|\alpha, \beta)}{dx} \right|_{x = \hat{x}} = 0 \iff \left. \frac{d}{dx} \left(\frac{\beta}{\beta^{2} + (x - \alpha)^{2}}\right) \right|_{x = \hat{x}} = 0
 \end{equation}
 
 \begin{equation}
-    -\frac{1}{\pi} \beta (2\hat{x} - 2\alpha)\frac{1}{\beta^{4} + 2\beta^{2}(\hat{x} - \alpha)^{2} + (\hat{x} - \alpha)^{4}} =
+    -\frac{1}{\pi} \beta (2\hat{x} - 2\alpha)\frac{1}{\beta^{4} + 2\beta^{2}(\hat{x} - \alpha)^{2} + (\hat{x} - \alpha)^{4}} = 0
 \end{equation}
 \newline
-This is satisfied when $\hat{x} = \alpha$, as claimed. Thus, the frequentist's claim is accurate for the value of the most likely flash location. However, estimating the value of $\alpha$ with the sample mean is not good. To show this, we compare it with the Maximum Likelihood Estimate (MLE) method. The aim is to find the value of $\alpha$ that maximises the likelihood derived in Eq. (8), based on the observed sample ${x_k}$ ($k = 1, 2,\dots, N$). This means now having the likelihood being the product of individula likelihoods for all values of ${x_k}$. This is done by taking the derivative of the likelihood with respect to $\alpha$ and setting it to zero. However, for simplicity in derivation and computation, the log-likelihood is used instead.
+The $-\frac{1}{\pi} \beta$ terms can be dropped, leaving only the numerator $(2\hat{x} - 2\alpha)$ term to satisfy the equation. This is satisfied when $\hat{x} = \alpha$, as claimed. Thus, the frequentist's claim is accurate for the value of the most likely flash location. However, estimating the value of $\alpha$ with the sample mean is not robust. To show this, the Maximum Likelihood Estimate (MLE) method is used to compare the two estimators. The aim is to find the value of $\alpha$ that maximises the likelihood derived in Eq. (8), based on the observed sample $\{x_k\}$ ($k = 1, 2,\dots, N$). This means now having the likelihood being the product of individual likelihoods for all values of $\{x_k\}$, as the flashes are emitted at independent angles. Finding $\hat{\alpha}$ is done in a similar way as above, by taking the derivative of the likelihood with respect to $\alpha$ and setting it to zero. However, for simplicity in derivation and computation, the log-likelihood is used instead.
 
 \begin{equation}
-    \hat{\alpha}_{MLE} = \arg \max_{\alpha} \ln(\prod_{k=1}^{N}  \mathcal{L}_{x}(x_{k}|\alpha, \beta)) = \arg \max_{\alpha} \sum_{k=1}^{N} \ln(\frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x_{k} - \alpha)^{2}})
+    \hat{\alpha}_{MLE} = \arg \max_{\alpha} \ln(\prod_{k=1}^{N}  \mathcal{L}_{x}(\{x_{k}\}|\alpha, \beta)) = \arg \max_{\alpha} \sum_{k=1}^{N} \ln(\frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x_{k} - \alpha)^{2}})
 \end{equation}
 
 \begin{equation}
@@ -235,24 +245,189 @@ This is satisfied when $\hat{x} = \alpha$, as claimed. Thus, the frequentist's c
 \end{equation}
 
 \begin{equation}
-    \left. \frac{d}{d\alpha} \left( \sum_{k=1}^{N} \ln(\frac{\beta}{\pi}) + \ln(\frac{1}{(\beta^{2} + (x_{k} - \alpha)^{2})}) \right) \right|_{\alpha = \hat{\alpha}_{MLE}} = 0
+    \left. \frac{d}{d\alpha} \left( \sum_{k=1}^{N} \ln(\frac{\beta}{\pi}) - \ln(\beta^{2} + (x_{k} - \alpha)^{2}) \right) \right|_{\alpha = \hat{\alpha}_{MLE}} = 0
 \end{equation}
 
 \begin{equation}
-    \sum_{k=1}^{N} \left. \frac{(2\alpha - 2x_{k})}{(\beta^{2} + (x_{k} - \alpha)^{2})} \right|_{\alpha = \hat{\alpha}_{MLE}} = 0
+    \sum_{k=1}^{N} \frac{(2\hat{\alpha}_{MLE} - 2x_{k})}{\beta^{2} + (x_{k} - \hat{\alpha}_{MLE})^{2}} = 0
 \end{equation}
 \newline
-To get an estimate of $\hat{\alpha}_{MLE}$, the above equation needs to be rearranged to isolate $\alpha$. However, this is difficult to do analytically. More importantly, the overarching issue is that the Cauchy distribution does not follow the Central Limit Theorem. This is shown in the fact that the distribution of the sample mean of the Cauchy distribution is itself a Cauchy distribution, no matter the sample size:
+To get an estimate of $\hat{\alpha}_{MLE}$, the above equation needs to be rearranged to isolate $\alpha$. However, this is difficult to do analytically. The sample mean estimator can be tested numerically. Using Pedro Pessoa's example code for the lighthouse problem \cite{pessoa_lighthouse}, flash location sample data is generated for $\alpha = 2$ and $\beta = 2$. The sample mean and confidence intervals are then calculated and compared to the true mean. The results are shown in Fig. \ref{fig:sample_mean} and are similar to the example shown in Fig 2.9 of Section 2.4 in Silvia's book \cite{sivia_data_analysis}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/cauchy_CLT.png}
+\caption{Plot of smaple mean and confidence intervals for the lighthouse problem, for varying sample sizes, with true parameters set to $\alpha = 2$ and $\beta = 2$}
+\label{fig:sample_mean}
+\end{figure}
+
+Fig. \ref{fig:sample_mean} shows that the sample mean estimator is not robust as it does not converge with the sample size increasing, sometimes even getting worse. This is due to the heavy-tailed nature of the Cauchy distribution. And in the context of the lighthouse problem, this was discussed shortly at the end of section (ii). The overarching issue is that the Cauchy distribution does not follow the Central Limit Theorem (CLT) \cite[p34]{sivia_data_analysis}. This is because the mean, or expected value of the cauchy distribution is undefined \cite[p84]{FJames2006}. This is shown in James' book \cite[p34]{FJames2006} where the characteristic function of the Cauchy distribution has no derivatives at t=0, which from the definition of the central moment, means it has no defined mean:
+
+\begin{equation}
+    \phi(t) = \int_{-\infty}^{\infty} e^{itx} \frac{1}{\pi} \frac{\beta}{\beta^{2} + (X - \alpha)^{2}} dX
+\end{equation}
+
+
+\section*{(iv) Priors for $\alpha$ and $\beta$}
+
+Since priors are primarily to express how much we know about the parameters before observing the data. For the lighthouse problem, it is simply know that the lighthouse is at some location $\alpha$ along the coastline and at some distance $\beta$ from the coastline, and no more. Thus, the priors for $\alpha$ and $\beta$ should be ignorant ones, such as the uniform distribution. These can be written as:
+
+\begin{equation}
+    \alpha \sim U(\alpha_{min}, \alpha_{max}) \text{ and } \beta \sim U(0, \beta_{max})
+\end{equation}
+
+\begin{equation}
+    P(\alpha) = \mathbbm{1}_{(\alpha_{min}, \alpha_{max})}(\alpha) \times \frac{1}{\alpha_{max} - \alpha_{min}} \text{ and } P(\beta) = \mathbbm{1}_{(0, \beta_{max})}(\beta) \times \frac{1}{\beta_{max}}
+\end{equation}
+
+where $\mathbbm{1}$ is the indicator function. $\beta$ is non-negative, hence the lower bound of the uniform distribution for $\beta$ is 0.
+
+
+\section*{(v) Stochastic Sampling }
+
+\subsection*{Defining the Posterior}
+
+With the likelihood and priors defined, and the general lighthouse problem understood, estimating the location parameters $\alpha$ and $\beta$ can be attempted. Here we use stochastic sampling approaches, directly drawing samples from the posterior distribution of the parameters. The posterior distribution is given by Bayes' theorem as:
+
+\begin{equation}
+    P(\alpha, \beta | x) = \frac{\mathcal{L}_{x}(x | \alpha, \beta) \times \pi(\alpha,\beta)}{Z}
+\end{equation}
+
+where $\pi(\alpha,\beta)$ is the joint prior distribution of $\alpha$ \& $\beta$, and $Z$ is the evidence. The evidence is the normalising constant, which is the integral of the likelihood function over the entire parameter space. Since it is a constant, evaluating it is not necessary for the purposes of sampling values of $\alpha$ and $\beta$ from the posterior. Furthermore, the joint prior distribution $\pi(\alpha,\beta)$ is simply the product of the individual priors for $\alpha$ and $\beta$, as they are independent. Finally, the estimation of the location parameters $\alpha$ and $\beta$ is based on $N = 20$ observed flash locations. These observations are plotted in Fig. \ref{fig:observations}'s diagram.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/lighthouse_flashes_diagram.png}
+\caption{The observed flash locations on the coastline, with a hypothetical lighthouse location at $\alpha = 0$ and $\beta = 0.1$}
+\label{fig:observations}
+\end{figure}
+
+\newpage
+
+With these data points, the likelihood in Eq. (18) is the product of the likelihood for each observation as in Eq. (11). This means we can rewrite the posterior distribution, $P$ as:
+
+\begin{equation}
+    P(\alpha, \beta | \{x_{k}\}) \propto \mathcal{L}_{x}(\{x_{k}\} | \alpha, \beta) \times \pi(\alpha) \times \pi(\beta)
+\end{equation}
+
+Giving the following expression:
+
+\begin{equation}
+    P(\alpha, \beta | \{x_{k}\}) \propto (\frac{\beta}{\pi})^{N} \times \prod_{k=1}^{N}\frac{1}{(\beta^{2} + (x_{k} - \alpha)^{2})} \times \frac{1}{\beta_{max}(\alpha_{max} - \alpha_{min})}
+\end{equation}
+
+Finally, for numerical precision reasons, to avoid product of small numbers, the log posterior is used instead:
+
+\begin{equation}
+    \ln(P(\alpha, \beta | \{x_{k}\})) \propto N\ln(\beta) - N\ln(\pi) - \sum_{k=1}^{N}\ln(\beta^{2} + (x_{k} - \alpha)^{2}) - \ln(\beta_{max}) - \ln(\alpha_{max} - \alpha_{min})
+\end{equation}
+
+Since the natural logarithm is a one-to-one mapping and is invertible, this will not affect the final result of the sampling, i.e. estimates of $\alpha$ and $\beta$.
+
+\subsection*{Sampling Methods}
+
+Here, multiple Monte-Carlo Markov Chains (MCMC) sampling algorithms were used. The first is the Metropolis-Hastings (MH) algorithm described below. One of the good things of the MH algorithm is that it does not require us to know the normalised target distribution.
+
+\begin{definitionbox}{Metropolis-Hastings Algorithm}
+    \begin{algorithmic}[1]
+        \State $l_{0} \sim (\alpha, \beta)$ \Comment{Initialisation}
+        \State $i \gets 0$
+        \While{$i \geq 0$} \Comment{Iterate $i = 0, 1, \dots, N$}
+            \State $y \sim \mathcal{N}(\alpha, \beta | l_{i}, cov)$ \Comment{Proposal distribution, here, a multivariate normal}
+            \State $a \gets (P(y|\{x_{k}\})\mathcal{N}(l_{i}|y, cov))/(P(l_{i}|\{x_{k}\})\mathcal{N}(y|l_{i}, cov))$ \Comment{MH acceptance probability}
+            \State $u \sim U(0, 1)$ \Comment{Uniform random number}
+            \If{$u < a$}
+                \State $l_{i+1} \gets y$ \Comment{Accept the proposal}
+            \Else
+                \State $l_{i+1} \gets x_{i}$ \Comment{Reject the proposal}
+            \EndIf
+            \State $i \gets i + 1$
+        \EndWhile
+        \end{algorithmic}
+    Where $cov$ is the covariance matrix of the multivariate normal distribution, $P(l_{i}|\{x-{k}\})$ is the posterior distribution, and $l, y = (\alpha, \beta)$ are proposed points in the parameter space.
+\end{definitionbox}
+
+\vspace*{1\baselineskip}
+The key step of MH, line 7 of the algorithm, is the check of the acceptance probability, $a$. This is the ratio of the posterior distribution at the proposed point, $y$, to the posterior distribution at the current point, $l_{i}$, multiplied by the ratio of the proposal distribution at the current point, $l_{i}$, to the proposal distribution at the proposed point, $y$. The proposal distribution is a multivariate normal distribution, with mean $l_{i}$ and covariance matrix $cov$, which is to be chosen. The acceptance probability is then compared to a uniformly drawn number between 0 and 1. If the acceptance probability is greater than $u$, the proposed point is accepted, and the chain moves to the proposed point. Otherwise, the proposed point is rejected, and the chain stays at the current point. The chain then iterates, moving through the parameter space, until a sufficient number of samples are obtained. One downside to MH is that it can be slow to converge, and line 10 of the algorithm makes it so MH can stay at the same point for multiple iterations, resulting in repeated samples.
+
+This is why the second algorithm used is the Hamiltonian Monte Carlo (HMC) algorithm. HMC is a more sophisticated algorithm that uses the gradient of the log posterior to guide the sampling. This means it can take larger steps through the parameter space without the "blindness" of MH as it will take these large steps in the direction of the steepest gradient. This is done by introducing a momentum variable, which is then used to guide the sampling. The HMC algorithm is described below.
+
+\vspace*{1\baselineskip}
+\begin{definitionbox}{Hamiltonian Monte Carlo Algorithm}
+    \begin{algorithmic}[1]
+        \State $l_{0} \sim (\alpha, \beta)$ \Comment{Initialisation}
+        \State $i \gets 0$
+        \While{$i \geq 0$} \Comment{Iterate $i = 0, 1, \dots, N$}
+            \State $p \sim \mathcal{N}(0, 1)$ \Comment{Sample momentum}
+            \State $q \gets l_{i}$ \Comment{Initial position}
+            \State $p \gets p - \epsilon \nabla \ln(P(q|\{x_{k}\}))$ \Comment{Leapfrog integration}
+            \State $q \gets q + \epsilon p$ \Comment{Leapfrog integration}
+            \State $p \gets p - \epsilon \nabla \ln(P(q|\{x_{k}\}))$ \Comment{Leapfrog integration}
+            \State $p \gets -p$ \Comment{Reverse momentum}
+            \State $H \gets \ln(P(q|\{x_{k}\})) + \frac{p^{2}}{2}$ \Comment{Hamiltonian}
+            \State $q_{new} \sim \mathcal{N}(q, cov)$ \Comment{Proposal distribution}
+            \State $p_{new} \gets p_{new} - \epsilon \nabla \ln(P(q_{new}|\{x_{k}\}))$ \Comment{Leapfrog integration}
+            \State $p_{new} \gets -p_{new}$ \Comment{Reverse momentum}
+            \State $H_{new} \gets \ln(P(q_{new}|\{x_{k}\})) + \frac{p_{new}^{2}}{2}$ \Comment{Hamiltonian}
+            \State $a \gets \min(1, e^{H - H_{new}})$ \Comment{HMC acceptance probability}
+            \State $u \sim U(0, 1)$ \Comment{Uniform random number}
+            \If{$u < a$}
+                \State $l_{i+1} \gets q_{new}$ \Comment{Accept the proposal}
+            \Else
+                \State $l_{i+1} \gets x_{
+                i}$ \Comment{Reject the proposal}
+            \EndIf
+            \State $i \gets i + 1$
+        \EndWhile
+        \end{algorithmic}
+    Where $cov$ is the covariance matrix of the multivariate normal distribution, $P(l_{i}|\{x-{k}\})$ is the posterior distribution, and $l, y = (\alpha, \beta)$ are proposed points in the parameter space.
+\end{definitionbox}
+
+
+Third, the slice sampling algorithm is used. This algorithm is also a MCMC algorithm and follows a relatively simple procedure. The main idea is to sample uniformly from the region under the curve of the posterior distribution. One of the main advantages of slice sampling is that it's acceptance rate is always 1, meaning that it is very efficient. Again, the slice sampling algorithm is described below.
+
+\begin{definitionbox}{Slice Sampling Algorithm \cite{karamanis_zeus}}
+\fontsize{8}{12}\selectfont
+    \begin{algorithmic}[1]
+        \State Initialize:
+        \State \quad $l_0 \gets$ Initial state
+        \State \quad $i \gets 0$
+        \While{$i \geq 0$} \Comment{Iterate until desired number of samples}
+            \State $y_{0} \sim U(0, P(l_{i}|\{x_{k}\}))$
+            \State Stepping Out Procedure: To find $I = (L, R)$ that contains all or at least part of $S$, expand I by a step of size $\mu$ until both ends of $I$: $L$ and $R$ are outside of $S$
+            \State $l_{i+1} \sim U(I \cap S)$ \Comment{Shrinking Procedure: Sample $l_{i+1}$ from I until one of them is inside S}
+            \State $i \gets i + 1$
+        \EndWhile
+    \end{algorithmic}
+    Where $S$ is the slice for which $\{l: y_{0} < (l_{i}|\{x_{k}\})\}$, and $P(l_{i}|\{x_{k}\})$ is the posterior distribution.
+\end{definitionbox}
+
+The issue that arises with simple slice sampling here is that the stepping out procedure has no guarantee of finding the entire slice S, especially in case of multimodal distributions. This is where the software package used, Zeus, comes in. Zeus is a Python package that implements a more sophisticated version of slice sampling, called Ensemble Slice Sampler. As its name suggests, it uses an ensemble of walkers to sample from the posterior distribution, each with a different starting point. This minimises the chances of the total chain sampled missing an entire mode of the posterior distribution \cite{karamanis_zeus}.
+
+
+\subsection*{Results}
+
+\subsubsection*{Metropolis-Hastings}
 
 
 
-\subsection*{(iv) Priors for $\alpha$ and $\beta$}
 
-Uniform for $\alpha$ and $\beta$. cuz it makes sense.
+\section*{(vi) Prior for the Intensity $I_{0}$ Parameter}
 
-\subsection*{(v) Stochastic Sampling }
+Again, the prior describing the knowledge we have about the intensity $I_{0}$. Because the intensity follows a log-normal distribution due to the inverse square law, the prior for $I_{0}$ should be a log-uniform distribution. MAYBE UNIFORM? Cuz it's just a constant set for the lighthouse
+
+\begin{equation}
+    I_{0} \sim U(I_{0_{min}}, I_{0_{max}})
+\end{equation}
+
+\section*{(vii) Stochastic Sampling, with the added Intensity $I_{0}$ Parameter}
 
 
+\section*{(viii) Comparison of the results}
+
+
+\bibliographystyle{plain}
+\bibliography{refs.bib}
 
 
 \end{document}
