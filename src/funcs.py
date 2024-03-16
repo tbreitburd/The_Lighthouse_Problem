@@ -35,7 +35,8 @@ flash_locs = data[:, 0]
 # Set the limits for alpha and beta
 alpha_lim = 100
 beta_lim = 100
-intensity_0_lim = 50
+intensity_0_min = 0.0001
+intensity_0_max = 50
 
 
 def lighthouse_cauchy(alpha, beta, x):
@@ -119,7 +120,6 @@ def log_posterior_v(param):
     @return The log posterior of the lighthouse Cauchy distribution
     """
 
-    alpha, beta = param
     global alpha_lim
     global beta_lim
     return log_likelihood_v(param) + log_prior_v(param, alpha_lim, beta_lim)
@@ -294,7 +294,7 @@ def cauchy_clt(alpha, beta, sample_size):
     plt.close()
 
 
-def lighthouse_intensity(alpha, beta, intensity_0, x, intensity):
+def lighthouse_intensity(alpha, beta, intensity_0, x, log_intensity):
     """!@brief Calculate the lighthouse Cauchy distribution
 
     @details This function takes in the parameters alpha and beta, and the
@@ -305,7 +305,7 @@ def lighthouse_intensity(alpha, beta, intensity_0, x, intensity):
     @param beta The scale of the lighthouse
     @param intensity_0 The intensity of the flash at the lighthouse
     @param x The position of the flash along the coastline
-    @param intensity The intensity of the observed flash
+    @param log_intensity The log of the intensity of the observed flash
 
     @return The probability density function of the lighthouse Cauchy distribution
     """
@@ -316,9 +316,9 @@ def lighthouse_intensity(alpha, beta, intensity_0, x, intensity):
     if intensity_0 <= 0:
         return 0  # Return 0 if intensity_0 is non-positive
 
-    expo_term = -(
-        (np.log(intensity) - np.log(intensity_0) + np.log(d_squared)) ** 2
-    ) / (2 * (sigma**2))
+    expo_term = -((log_intensity - np.log(intensity_0) + np.log(d_squared)) ** 2) / (
+        2 * (sigma**2)
+    )
     pdf = np.exp(expo_term) / denominator
     return pdf
 
@@ -336,7 +336,9 @@ def log_likelihood_vii(param):
         [
             np.log(
                 max(
-                    lighthouse_intensity(alpha, beta, intensity_0, point, intensity),
+                    lighthouse_intensity(
+                        alpha, beta, intensity_0, point, np.log(intensity)
+                    ),
                     epsilon,
                 )
             )
@@ -347,7 +349,7 @@ def log_likelihood_vii(param):
     return likelihood
 
 
-def log_prior_vii(param, alpha_lim, beta_lim, intensity_0_lim):
+def log_prior_vii(param, alpha_lim, beta_lim, intensity_0_max, intensity_0_min):
     """!@brief Calculate the log prior of the lighthouse Cauchy distribution
 
     @details This function takes in the parameters alpha and beta, and the
@@ -362,41 +364,42 @@ def log_prior_vii(param, alpha_lim, beta_lim, intensity_0_lim):
     """
 
     alpha, beta, intensity_0 = param
-    # Uniform prior
-    prior_alpha_beta = -np.log(((2 * alpha_lim) * beta_lim))
-    prior_log_intensity = -np.log(intensity_0_lim)
-
-    log_prior = prior_alpha_beta + prior_log_intensity
 
     if (
         -alpha_lim < alpha < alpha_lim
         and 0 < beta < beta_lim
-        and 0 < intensity_0 < intensity_0_lim
+        and intensity_0_min < intensity_0 < intensity_0_max
     ):
+        # Uniform prior
+        prior_alpha_beta = -np.log(((2 * alpha_lim) * beta_lim))
+        prior_log_intensity = -np.log(
+            intensity_0 * (np.log(intensity_0_max) - np.log(intensity_0_min))
+        )
+
+        log_prior = prior_alpha_beta + prior_log_intensity
         return log_prior
     else:
         return -np.inf
 
 
 def log_posterior_vii(param):
-    """!@brief Calculate the log posterior of the lighthouse Cauchy distribution
+    """!@brief Calculate the log posterior of the lighthouse parameters
 
-    @details This function takes in the parameters alpha and beta, and the
-    position x, and returns the log posterior of the lighthouse Cauchy
-    distribution.
+    @details This function takes in the parameters alpha, beta, and I_0,
+    evaluates the log likelihood of the flash location and intensity,
+    as well as the log joint prior distribution of the lighthouse parameters,
+    and returns the log posterior of the lighthouse parameters.
 
-    @param param The parameters alpha and beta
-    @param flash_locs The position of the flashes
+    @param param The parameters alpha, beta, and intensity_0
 
-    @return The log posterior of the lighthouse Cauchy distribution
+    @return The log posterior distribution of the lighthouse location and intensity parameters
     """
 
-    alpha, beta, intensity_0 = param
     global alpha_lim
     global beta_lim
     global intensity_0_lim
     return log_likelihood_vii(param) + log_prior_vii(
-        param, alpha_lim, beta_lim, intensity_0_lim
+        param, alpha_lim, beta_lim, intensity_0_max, intensity_0_min
     )
 
 
@@ -536,7 +539,9 @@ def plot_corner(chain, ndim, algorithm):
     chain = pd.DataFrame(chain, columns=columns)
 
     # Plot the corner plot
-    sns.pairplot(chain, kind="hist", plot_kws={"bins": 20}, diag_kws={"bins": 20})
+    sns.pairplot(
+        chain, kind="hist", plot_kws={"bins": 20}, diag_kws={"bins": 20}, corner=True
+    )
 
     # Save the plot
     project_dir = os.getcwd()

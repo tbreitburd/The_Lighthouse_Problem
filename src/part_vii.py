@@ -29,7 +29,7 @@ data_path = os.path.join(proj_dir, path)
 # Read the data
 data = np.loadtxt(data_path)
 flash_locs = data[:, 0]
-flash_intensities = data[:, 1]
+log_flash_intensities = np.log(data[:, 1])
 
 print("---------------------------------")
 print("---------------------------------")
@@ -40,7 +40,8 @@ print(data)
 # Set the limits for alpha and beta
 alpha_lim = 100
 beta_lim = 100
-intensity_lim = 50
+intensity_min = 0.0001
+intensity_max = 50
 
 # Plot the data as a diagram of the lighthouse and the flashes
 # for a hypothetical lighthouse at position alpha = 0 and beta = 0.1
@@ -73,11 +74,11 @@ print(
 )
 
 
-nsteps, ndim = 100000, 3  # Define the number of steps and the number of dimensions
+nsteps, ndim = 500000, 3  # Define the number of steps and the number of dimensions
 init = [
     np.random.uniform(-alpha_lim, alpha_lim),
     np.random.uniform(0, beta_lim),
-    np.random.uniform(0.001, intensity_lim),
+    np.random.uniform(intensity_min, intensity_max),
 ]  # Starting point of the chain
 cov = np.array([[1.5, 0.0, 0.0], [0.0, 1.5, 0.0], [0.0, 0.0, 1.5]])
 
@@ -121,7 +122,7 @@ for i in range(nchains):
     init = [
         np.random.uniform(-alpha_lim, alpha_lim),
         np.random.uniform(0, beta_lim),
-        np.random.uniform(0.001, intensity_lim),
+        np.random.uniform(intensity_min, intensity_max),
     ]
     chains_MH[:, i, :], _ = funcs.Metropolis_Hastings(
         nsteps, ndim, funcs.log_posterior_vii, cov, init
@@ -166,7 +167,7 @@ start = np.array(
     [
         np.random.uniform(-alpha_lim, alpha_lim, 10),
         np.random.uniform(0, beta_lim, 10),
-        np.random.uniform(0.001, intensity_lim, 10),
+        np.random.uniform(intensity_min, intensity_max, 10),
     ]
 ).T
 # start = np.abs(np.random.randn(nwalkers, ndim))
