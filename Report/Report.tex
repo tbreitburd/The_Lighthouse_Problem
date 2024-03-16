@@ -153,13 +153,13 @@
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\textwidth]{../Plots/lighthouse_diagram.png}
+\includegraphics[width=0.8\textwidth]{../Plots/lighthouse diagram.png}
 \caption{The lighthouse problem setup}
 \label{fig:lighthouse}
 \end{figure}
 
 
-The goal of this project is to find the location of the lighthouse from the recorded data ${x_{k}}$.
+The goal of this project is to find the location of the lighthouse from the observed detector data $\{x_{k}\}$, and $\{I_{k}\}$.
 
 \section*{(i) The Geometry of the Problem}
 
@@ -326,7 +326,7 @@ Since the natural logarithm is a one-to-one mapping and is invertible, this will
 
 \subsection*{Sampling Methods}
 
-Here, multiple Monte-Carlo Markov Chains (MCMC) sampling algorithms were used. The first is the Metropolis-Hastings (MH) algorithm described below. One of the good things of the MH algorithm is that it does not require us to know the normalised target distribution.
+Here, multiple Markov Chains Monte-Carlo (MCMC) sampling algorithms were used. The first is the Metropolis-Hastings (MH) algorithm described below. One of the good things of the MH algorithm is that it does not require us to know the normalised target distribution.
 
 \begin{definitionbox}{Metropolis-Hastings Algorithm}
     \begin{algorithmic}[1]
@@ -350,41 +350,8 @@ Here, multiple Monte-Carlo Markov Chains (MCMC) sampling algorithms were used. T
 \vspace*{1\baselineskip}
 The key step of MH, line 7 of the algorithm, is the check of the acceptance probability, $a$. This is the ratio of the posterior distribution at the proposed point, $y$, to the posterior distribution at the current point, $l_{i}$, multiplied by the ratio of the proposal distribution at the current point, $l_{i}$, to the proposal distribution at the proposed point, $y$. The proposal distribution is a multivariate normal distribution, with mean $l_{i}$ and covariance matrix $cov$, which is to be chosen. The acceptance probability is then compared to a uniformly drawn number between 0 and 1. If the acceptance probability is greater than $u$, the proposed point is accepted, and the chain moves to the proposed point. Otherwise, the proposed point is rejected, and the chain stays at the current point. The chain then iterates, moving through the parameter space, until a sufficient number of samples are obtained. One downside to MH is that it can be slow to converge, and line 10 of the algorithm makes it so MH can stay at the same point for multiple iterations, resulting in repeated samples.
 
-This is why the second algorithm used is the Hamiltonian Monte Carlo (HMC) algorithm. HMC is a more sophisticated algorithm that uses the gradient of the log posterior to guide the sampling. This means it can take larger steps through the parameter space without the "blindness" of MH as it will take these large steps in the direction of the steepest gradient. This is done by introducing a momentum variable, which is then used to guide the sampling. The HMC algorithm is described below.
 
-\vspace*{1\baselineskip}
-\begin{definitionbox}{Hamiltonian Monte Carlo Algorithm}
-    \begin{algorithmic}[1]
-        \State $l_{0} \sim (\alpha, \beta)$ \Comment{Initialisation}
-        \State $i \gets 0$
-        \While{$i \geq 0$} \Comment{Iterate $i = 0, 1, \dots, N$}
-            \State $p \sim \mathcal{N}(0, 1)$ \Comment{Sample momentum}
-            \State $q \gets l_{i}$ \Comment{Initial position}
-            \State $p \gets p - \epsilon \nabla \ln(P(q|\{x_{k}\}))$ \Comment{Leapfrog integration}
-            \State $q \gets q + \epsilon p$ \Comment{Leapfrog integration}
-            \State $p \gets p - \epsilon \nabla \ln(P(q|\{x_{k}\}))$ \Comment{Leapfrog integration}
-            \State $p \gets -p$ \Comment{Reverse momentum}
-            \State $H \gets \ln(P(q|\{x_{k}\})) + \frac{p^{2}}{2}$ \Comment{Hamiltonian}
-            \State $q_{new} \sim \mathcal{N}(q, cov)$ \Comment{Proposal distribution}
-            \State $p_{new} \gets p_{new} - \epsilon \nabla \ln(P(q_{new}|\{x_{k}\}))$ \Comment{Leapfrog integration}
-            \State $p_{new} \gets -p_{new}$ \Comment{Reverse momentum}
-            \State $H_{new} \gets \ln(P(q_{new}|\{x_{k}\})) + \frac{p_{new}^{2}}{2}$ \Comment{Hamiltonian}
-            \State $a \gets \min(1, e^{H - H_{new}})$ \Comment{HMC acceptance probability}
-            \State $u \sim U(0, 1)$ \Comment{Uniform random number}
-            \If{$u < a$}
-                \State $l_{i+1} \gets q_{new}$ \Comment{Accept the proposal}
-            \Else
-                \State $l_{i+1} \gets x_{
-                i}$ \Comment{Reject the proposal}
-            \EndIf
-            \State $i \gets i + 1$
-        \EndWhile
-        \end{algorithmic}
-    Where $cov$ is the covariance matrix of the multivariate normal distribution, $P(l_{i}|\{x-{k}\})$ is the posterior distribution, and $l, y = (\alpha, \beta)$ are proposed points in the parameter space.
-\end{definitionbox}
-
-
-Third, the slice sampling algorithm is used. This algorithm is also a MCMC algorithm and follows a relatively simple procedure. The main idea is to sample uniformly from the region under the curve of the posterior distribution. One of the main advantages of slice sampling is that it's acceptance rate is always 1, meaning that it is very efficient. Again, the slice sampling algorithm is described below.
+Second, the slice sampling algorithm is used. This algorithm is also a MCMC algorithm and follows a relatively simple procedure. The main idea is to sample uniformly from the region under the curve of the posterior distribution. One of the main advantages of slice sampling is that it's acceptance rate is always 1, meaning that it is very efficient. Again, the slice sampling algorithm is described below.
 
 \begin{definitionbox}{Slice Sampling Algorithm \cite{karamanis_zeus}}
 \fontsize{8}{12}\selectfont
@@ -402,7 +369,7 @@ Third, the slice sampling algorithm is used. This algorithm is also a MCMC algor
     Where $S$ is the slice for which $\{l: y_{0} < (l_{i}|\{x_{k}\})\}$, and $P(l_{i}|\{x_{k}\})$ is the posterior distribution.
 \end{definitionbox}
 
-The issue that arises with simple slice sampling here is that the stepping out procedure has no guarantee of finding the entire slice S, especially in case of multimodal distributions. This is where the software package used, Zeus, comes in. Zeus is a Python package that implements a more sophisticated version of slice sampling, called Ensemble Slice Sampler. As its name suggests, it uses an ensemble of walkers to sample from the posterior distribution, each with a different starting point. This minimises the chances of the total chain sampled missing an entire mode of the posterior distribution \cite{karamanis_zeus}.
+The issue that arises with simple slice sampling here is that the stepping out procedure has no guarantee of finding the entire slice S, especially in case of multimodal distributions. This is where the software package used, \texttt{zeus}, comes in. \texttt{zeus} is a Python package that implements a more sophisticated version of slice sampling, called Ensemble Slice Sampler. As its name suggests, it uses an ensemble of walkers to sample from the posterior distribution, each with a different starting point. This minimises the chances of the total chain sampled missing an entire mode of the posterior distribution \cite{karamanis_zeus}.
 
 
 \subsection*{Results}
@@ -410,21 +377,170 @@ The issue that arises with simple slice sampling here is that the stepping out p
 \subsubsection*{Metropolis-Hastings}
 
 
+The total acceptance fraction for the chain was 0.27555, which is reasonable for the MH algorithm. In order to reflect the a priori knowledge we had of the position of the lighthouse, the initial position of the chain was set randomly, following a uniform distribution in between the set limits. This, however, meant the chain would have to converge first to the region of high probability, which requires us to ignore the first few samples of the chain. To check how many samples it took for the chain to converge, a plot of the first 1000 samples was made.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/chain_plot_vMH.png}
+\caption{First 1000 samples of the MH chain for the lighthouse problem}
+\label{fig:MH_convergence}
+\end{figure}
+
+Fig. \ref{fig:MH_convergence} shows that the chain converges in just about 1000 steps. Thus, before estimating the parameters from the chain, this burn-in period of 1000 steps must be ignored and dropped. Furthermore, once this is done, due to the nature of MCMC chains, subsequent samples are correlated. And so, to obtain independent samples, the chain must be thinned, by only taking every n-th sample. The value of n is determined by seeing how long it takes the chain to oscillate from one end of the distribution to the other. This is called the autocorrelation time. For MH, it was found to be 10.9 steps. Thus, the chain was thinned by a factor of 11. The following samples were kept:
+\newpage
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/corner_plot_vMH.png}
+\caption{Metropolis-Hastings samples for the lighthouse problem, }
+\label{fig:MH_samples}
+\end{figure}
+
+Fig. \ref{fig:MH_samples} shows a corner plot of the samples generated using the MH algorithm. Taking the sample mean and standard deviation of the samples, the following estimates for $\alpha$ and $\beta$ were obtained:
+
+\begin{equation}
+    \hat{\alpha}_{MH} = -0.4428 \pm 0.5977 \text{ and } \hat{\beta}_{MH} = 1.9595 \pm 0.6669
+\end{equation}
+
+\subsubsection*{\texttt{zeus} Ensemble Slice Sampler}
+
+Using \texttt{zeus}, the acceptance rate is always 1, as mentioned earlier. Similarly, starting locations were randomly sampled from the prior distributions. 10,000 samples were generated, for 10 walkers. Looking at a plot of the chain in Fig. \ref{fig:SS_convergence}, it is clear that the chain converges much quicker than MH, and staying conservative, the burn-in period was set to be 100 steps. This can be attributed to the nature of slice sampling, which allows for much bigger steps to be taken as they will always be under the curve of the posterior distribution.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Plots/chain_plot_vSS.png}
+    \caption{First 1000 samples of the SS chain for the lighthouse problem}
+    \label{fig:SS_convergence}
+    \end{figure}
+
+This is also backed by the fact that the autocorrelation time for the chain was found to be 4.8 steps. Thus, the chain was thinned by a factor of 5. The following samples were kept:
+
+\newpage
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/corner_plot_vSS.png}
+\caption{\texttt{zeus} Ensemble Slice Sampler samples for the lighthouse problem, }
+\label{fig:SS_samples}
+\end{figure}
+
+
+Giving the following estimates for $\alpha$ and $\beta$:
+
+\begin{equation}
+    \hat{\alpha}_{SS} = -0.4558 \pm 0.6038 \text{ and } \hat{\beta}_{SS} = 1.9678 \pm 0.6757
+\end{equation}
 
 \section*{(vi) Prior for the Intensity $I_{0}$ Parameter}
 
-Again, the prior describing the knowledge we have about the intensity $I_{0}$. Because the intensity follows a log-normal distribution due to the inverse square law, the prior for $I_{0}$ should be a log-uniform distribution. MAYBE UNIFORM? Cuz it's just a constant set for the lighthouse
+Again, the prior describing the knowledge we have about the intensity $I_{0}$. Because the intensity is a physical property of the lighthouse, it would be useful for it to be scale invariant. That is, the prior should be invariant under a change of units:
 
 \begin{equation}
-    I_{0} \sim U(I_{0_{min}}, I_{0_{max}})
+    \pi(I_{0}) dI_{0} = \pi(\gamma I_{0}) d(\gamma I_{0}) \Rightarrow \pi(I_{0}) \propto \frac{1}{I_{0}}
 \end{equation}
+
+This is equivalent to having:
+
+\begin{equation}
+    \log I_{0} \sim U(I_{0_{max}}, I_{0_{max}})  \iff I_{0} \sim \frac{1}{I_{0} \log(\frac{I_{0_{max}}}{I_{0_{min}}})}
+\end{equation}
+
 
 \section*{(vii) Stochastic Sampling, with the added Intensity $I_{0}$ Parameter}
 
 
+\subsection*{Defining the Posterior}
+
+The likelihood for the measured intensity $I$ is given by a log-normal distribution with uncertainty $\sigma = 1$/ The expectation $\mu$ given by the inverse square law, and therefore depending on $x$, $\alpha$ and $\beta$, such that $\mu = \log(I_{0}/((x - \alpha)^{2} + \beta^{2}))$. The log-likelihood for the measured intensity $I$ is then given by:
+
+\begin{equation}
+    I \sim \mathcal{L}_{I}(\log I | \alpha, \beta, I_{0}) = \frac{exp(\frac{-(\log I - \mu)^{2}}{2\sigma^{2}})}{\sqrt{2\pi\sigma^{2}}}
+\end{equation}
+
+Since the location and intensity measurements are independent, the joint likelihood for the location and intensity measurements is the product of the individual likelihoods. The log-likelihood for the location and intensity measurements is then given by:
+
+\begin{equation}
+    \ln(\mathcal{L}_{x, I}(\{x_{k}\}, \{\log I_{k}\} | \alpha, \beta, I_{0})) = \ln(\mathcal{L}_{x}(\{x_{k}\} | \alpha, \beta)) + \ln(\mathcal{L}_{I}(\{\log I_{k}\} | \alpha, \beta, I_{0}))
+\end{equation}
+
+For which the likelihood of the location is given in Eq.(8) and (11). Finally, with the joint prior also being the product of the individual priors, and the prior for intensity being a log-uniform distribution, the log prior is given by:
+
+\begin{equation}
+    \ln(\pi(\alpha, \beta, I_{0})) = \ln(\pi(\alpha)) + \ln(\pi(\beta)) + \ln(\pi(I_{0}))
+\end{equation}
+
+Thus the log posterior is given by:
+
+\begin{equation}
+    \ln(P(\alpha, \beta, I_{0} | \{x_{k}\}, \{\log I_{k}\})) = \ln(\mathcal{L}_{x, I}(\{x_{k}\}, \{\log I_{k}\} | \alpha, \beta, I_{0})) + \ln(\pi(\alpha, \beta, I_{0}))
+\end{equation}
+
+\subsection*{Sampling Methods}
+
+The same three MCMC algorithms were used to sample from the posterior distribution of the parameters. The parameter limits set are the same for $\alpha$ and $\beta$, and the prior for $I_{0}$ is set to be between a near-zero value (0.0001) and 50. The Metropolis-Hastings and \texttt{zeus} Ensemble Slice Sampler algorithms were used as before, but with a larger number of samples generated (500,000) for the MH algorithm. The initial positions for the location parameters were obtained in the same way, with the intensity parameter being randomly sampled from the prior distribution as well.
+
+\subsection*{Results}
+
+\subsubsection*{Metropolis-Hastings}
+
+Due to the higher dimension, the total acceptance fraction for this chain was much lower than in part (v). With just 7.65\% of the total samples being accepted, this is still a reasonable amount though much worse than before. In case the burn-in was also worse in this context, the first steps of the chain were once again plotted to check when the chain converged.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/chain_plot_viiMH.png}
+\caption{First 1000 samples of the MH chain for the lighthouse problem}
+\label{fig:MH_convergence_vii}
+\end{figure}
+
+Fig. \ref{fig:MH_convergence_vii} shows that the chhain again converges in about 1000 steps, maybe even shorter. To stay conservative however, the burn-in period is set to 1000 steps and is dropped. However, the autocorrelation time is much larger for this case as it was found to be 94 steps. So the chain is thinned by a factor of 90+. This is why a larger number of samples were generated, in order to have a larger amount of independent samples to estimate the parameters with. With the samples left, the corner plot of the 2-D and 1-D marginal distributions of the posterior was obtained in Fig. \ref{fig:MH_samples_vii}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/corner_plot_viiMH.png}
+\caption{Metropolis-Hastings samples for the lighthouse problem, }
+\label{fig:MH_samples_vii}
+\end{figure}
+
+Taking the sample mean and standard deviation of the samples, estimates of the lighthouse parameters were obtained:
+
+\begin{equation}
+    \hat{\alpha}_{MH} = -0.1821 \pm 0.3311 \text{ and } \hat{\beta}_{MH} = 1.5193 \pm 0.3608 \text{ and } \hat{I}_{0} = 3.7809 \pm 1.2880
+\end{equation}
+
+\subsubsection*{\texttt{zeus} Ensemble Slice Sampler}
+
+Again, using \texttt{zeus}, the acceptance rate is always 1. Looking at a plot of the chain in Fig. \ref{fig:SS_convergence_vii}, it once again converges much quicker than MH. So the burn-in is kept at 100 steps.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Plots/chain_plot_viiSS.png}
+    \caption{First 1000 samples of the SS chain for the lighthouse problem}
+    \label{fig:SS_convergence_vii}
+    \end{figure}
+
+The autocorrelation time also increases for this algorithm, with a value of 9 steps. Thus, the chain was thinned by a factor of 9. The following samples were kept:
+
+\newpage
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{../Plots/corner_plot_viiSS.png}
+\caption{\texttt{zeus} Ensemble Slice Sampler samples for the lighthouse problem, }
+\label{fig:SS_samples_vii}
+\end{figure}
+
+Giving the following estimates for $\alpha$ and $\beta$:
+
+\begin{equation}
+    \hat{\alpha}_{SS} = -0.1945 \pm 0.3311 \text{ and } \hat{\beta}_{SS} = 1.5229 \pm 0.3639 \text{ and } \hat{I}_{0} = 3.7814 \pm 1.2565
+\end{equation}
+
+
 \section*{(viii) Comparison of the results}
 
+First off, it is reassuring that the estimates of the 2 algorithms are very close. Adding the intensity measurement and parameter to the estimation does lead to a change in the values of $\alpha$ and $\beta$. More importantly the uncertainties do decrease, which does bring more confidence to the estimates.
 
 \bibliographystyle{plain}
 \bibliography{refs.bib}
