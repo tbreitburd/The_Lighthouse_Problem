@@ -209,10 +209,3 @@ print("beta_SS = ", beta_est_SS, " ± ", beta_sig_SS)
 
 # Plot the distribution of the samples in a corner plot
 funcs.plot_corner(chain_SS, ndim, "SS")
-
-# ---------------------------------
-# Using the emcee sampler (emcee)
-# ---------------------------------
-print("        ")
-print("------ Emcee ------")
-print("Using the emcee sampler:")

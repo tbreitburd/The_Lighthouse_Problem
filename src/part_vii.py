@@ -223,10 +223,3 @@ print("Intensity_0_SS = ", Intensity_0_est_SS, " ± ", Intensity_0_sig_SS)
 
 # Plot the distribution of the samples in a corner plot
 funcs.plot_corner(chain_SS, ndim, "SS")
-
-# ---------------------------------
-# Using the emcee sampler (emcee)
-# ---------------------------------
-print("        ")
-print("------ Emcee ------")
-print("Using the emcee sampler:")
