@@ -15,4 +15,5 @@ RUN echo "conda activate S2CW" >> ~/.bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
 RUN git init
+RUN pip install pre-commit
 RUN pre-commit install

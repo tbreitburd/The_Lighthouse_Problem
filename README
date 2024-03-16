@@ -14,7 +14,7 @@ For permissions reasons, the ```Dockerfile``` is not set up to pull the reposito
 To run the solver on a Docker container, one first has to build the image and run the container. This can be done as follows:
 
 ```bash
-$ docker build -t s2_coursework
+$ docker build -t s2_coursework .
 $ docker run --rm -ti s2_coursework
 ```
 
