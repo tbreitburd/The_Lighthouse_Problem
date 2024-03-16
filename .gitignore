@@ -9,3 +9,5 @@ Plots/*
 
 src/test_area.ipynb
 src/__pycache__/
+
+/docs/latex
