@@ -147,7 +147,7 @@
 
 \chapter*{The Lighthouse Problem}
 
-\section*{The Setup}
+\chapter{The Setup}
 
 \indent A lighthouse that is at a distance $\beta$ from the coast is at position $\alpha$ along it. The lighthouse emits flashes at random angles $\theta$, following a uniform distribution. The flashes can be considered narrow and, provided $\pi/2 < \theta < \pi/2$, intersect the coastline at a single point. Detectors on the coastline record only the flashes' locations $x_{k}$ (where $k = 1, 2,\dots, N$ ) for N flashes received. The setup is illustrated in Figure \ref{fig:lighthouse}.
 
@@ -161,7 +161,7 @@
 
 The goal of this project is to find the location of the lighthouse from the observed detector data $\{x_{k}\}$, and $\{I_{k}\}$.
 
-\section*{(i) The Geometry of the Problem}
+\chapter{(i) The Geometry of the Problem}
 
 As stated above, only the distribution of the flashes' angle, $\theta$, is known. However, the observed data obtained is the location of the flashes on the coastline, $x_{k}$. Thus, it is worth considering what the relationship is between the angle of the flash and the location of the flash on the coastline, expressed in terms of the unknown lightouse location parameters $\alpha$ and $\beta$. Using trigonometry, the following relationship can be derived:
 
@@ -169,7 +169,7 @@ As stated above, only the distribution of the flashes' angle, $\theta$, is known
     x = \alpha + \beta \tan(\theta) \iff \theta = \tan^{-1}\left(\frac{x - \alpha}{\beta}\right)
 \end{equation}
 
-\section*{(ii) The Likelihood Function}
+\chapter{(ii) The Likelihood Function}
 
 In addition to the relationship above, the probability distribution of the flashes' angles is known to be uniform. Thus, the probability of a single flash to have the angle $\theta$ is given by:
 
@@ -220,9 +220,9 @@ as required. Below is an example plot of the likelihood function for hypothetica
 \label{fig:cauchy_distribution}
 \end{figure}
 
-Fig. \ref{fig:cauchy_distribution} shows the Cauchy distribution, which is a heavy-tailed distribution. This means that the likelihood stays non-negligible for values of x very different from $\alpha$. This is a result of the trigonometric relationship between $\theta$ and $x$ in Eq. (1). When the angle $\theta$ is close to $\pm \pi/2$, small changes in $\theta$ can result in large changes in $x$. And since the angle $\theta$ is uniformly distributed, the likelihood of observing a flash at a location $x$ far from $\alpha$ is non-negligible.
+Fig. \ref{fig:cauchy_distribution} shows the Cauchy distribution, which is a heavy-tailed distribution \cite[p34]{sivia_data_analysis} \cite[p84]{FJames2006}. This means that the likelihood stays non-negligible for values of x very different from $\alpha$. This is a result of the trigonometric relationship between $\theta$ and $x$ in Eq. (1). When the angle $\theta$ is close to $\pm \pi/2$, small changes in $\theta$ can result in large changes in $x$. And since the angle $\theta$ is uniformly distributed, the likelihood of observing a flash at a location $x$ far from $\alpha$ is non-negligible.
 
-\section*{(iii) Frequentist Claim}
+\chapter{(iii) Frequentist Claim}
 
 A frequentist colleague claims the most likely location, $\hat{x}$, for any flash to be received is given by the parameter $\alpha$, the location of the lighthouse along the coastline. They also suggest using the sample mean to estimate the $\alpha$ parameter. First, the $\hat{x} = \alpha$ claim. $\hat{x}$ is the location for which the likelihood in Eq. (8) is maximised. This is found by taking the derivative of the likelihood with respect to $x$ and setting it to zero. This gives:
 
@@ -234,7 +234,7 @@ A frequentist colleague claims the most likely location, $\hat{x}$, for any flas
     -\frac{1}{\pi} \beta (2\hat{x} - 2\alpha)\frac{1}{\beta^{4} + 2\beta^{2}(\hat{x} - \alpha)^{2} + (\hat{x} - \alpha)^{4}} = 0
 \end{equation}
 \newline
-The $-\frac{1}{\pi} \beta$ terms can be dropped, leaving only the numerator $(2\hat{x} - 2\alpha)$ term to satisfy the equation. This is satisfied when $\hat{x} = \alpha$, as claimed. Thus, the frequentist's claim is accurate for the value of the most likely flash location. However, estimating the value of $\alpha$ with the sample mean is not robust. To show this, the Maximum Likelihood Estimate (MLE) method is used to compare the two estimators. The aim is to find the value of $\alpha$ that maximises the likelihood derived in Eq. (8), based on the observed sample $\{x_k\}$ ($k = 1, 2,\dots, N$). This means now having the likelihood being the product of individual likelihoods for all values of $\{x_k\}$, as the flashes are emitted at independent angles. Finding $\hat{\alpha}$ is done in a similar way as above, by taking the derivative of the likelihood with respect to $\alpha$ and setting it to zero. However, for simplicity in derivation and computation, the log-likelihood is used instead.
+The $-\frac{1}{\pi} \beta$ terms can be dropped, leaving only the numerator $(2\hat{x} - 2\alpha)$ term to satisfy the equation. This is satisfied when $\hat{x} = \alpha$, as claimed. Thus, the frequentist's claim is accurate for the value of the most likely flash location. However, estimating the value of $\alpha$ with the sample mean is not robust. To show this, the Maximum Likelihood Estimate (MLE) method is used to compare the two estimators \cite[pp 135-137]{FJames2006}. The aim is to find the value of $\alpha$ that maximises the likelihood derived in Eq. (8), based on the observed sample $\{x_k\}$ ($k = 1, 2,\dots, N$). This means now having the likelihood being the product of individual likelihoods for all values of $\{x_k\}$, as the flashes are emitted at independent angles. Finding $\hat{\alpha}$ is done in a similar way as above, by taking the derivative of the likelihood with respect to $\alpha$ and setting it to zero. However, for simplicity in derivation and computation, the log-likelihood is used instead.
 
 \begin{equation}
     \hat{\alpha}_{MLE} = \arg \max_{\alpha} \ln(\prod_{k=1}^{N}  \mathcal{L}_{x}(\{x_{k}\}|\alpha, \beta)) = \arg \max_{\alpha} \sum_{k=1}^{N} \ln(\frac{1}{\pi} \times \frac{\beta}{\beta^{2} + (x_{k} - \alpha)^{2}})
@@ -261,14 +261,14 @@ To get an estimate of $\hat{\alpha}_{MLE}$, the above equation needs to be rearr
 \label{fig:sample_mean}
 \end{figure}
 
-Fig. \ref{fig:sample_mean} shows that the sample mean estimator is not robust as it does not converge with the sample size increasing, sometimes even getting worse. This is due to the heavy-tailed nature of the Cauchy distribution. And in the context of the lighthouse problem, this was discussed shortly at the end of section (ii). The overarching issue is that the Cauchy distribution does not follow the Central Limit Theorem (CLT) \cite[p34]{sivia_data_analysis}. This is because the mean, or expected value of the cauchy distribution is undefined \cite[p84]{FJames2006}. This is shown in James' book \cite[p34]{FJames2006} where the characteristic function of the Cauchy distribution has no derivatives at t=0, which from the definition of the central moment, means it has no defined mean:
+Fig. \ref{fig:sample_mean} shows that the sample mean estimator is not robust as it does not converge with the sample size increasing, sometimes even getting worse. This is due to the heavy-tailed nature of the Cauchy distribution  \cite[p34]{sivia_data_analysis} \cite[p84]{FJames2006}. And in the context of the lighthouse problem, this was discussed shortly at the end of section (ii). The overarching issue is that the Cauchy distribution does not follow the Central Limit Theorem (CLT) \cite[p34]{sivia_data_analysis}. This is because the mean, or expected value of the cauchy distribution is undefined \cite[p84]{FJames2006}. This is shown in James' book \cite[p34]{FJames2006} where the characteristic function of the Cauchy distribution has no derivatives at t=0, which from the definition of the central moment, means it has no defined mean:
 
 \begin{equation}
     \phi(t) = \int_{-\infty}^{\infty} e^{itx} \frac{1}{\pi} \frac{\beta}{\beta^{2} + (X - \alpha)^{2}} dX
 \end{equation}
 
 
-\section*{(iv) Priors for $\alpha$ and $\beta$}
+\chapter{(iv) Priors for $\alpha$ and $\beta$}
 
 Since priors are primarily to express how much we know about the parameters before observing the data. For the lighthouse problem, it is simply know that the lighthouse is at some location $\alpha$ along the coastline and at some distance $\beta$ from the coastline, and no more. Thus, the priors for $\alpha$ and $\beta$ should be ignorant ones, such as the uniform distribution. These can be written as:
 
@@ -283,9 +283,9 @@ Since priors are primarily to express how much we know about the parameters befo
 where $\mathbbm{1}$ is the indicator function. $\beta$ is non-negative, hence the lower bound of the uniform distribution for $\beta$ is 0.
 
 
-\section*{(v) Stochastic Sampling }
+\chapter{(v) Stochastic Sampling }
 
-\subsection*{Defining the Posterior}
+\section{Defining the Posterior}
 
 With the likelihood and priors defined, and the general lighthouse problem understood, estimating the location parameters $\alpha$ and $\beta$ can be attempted. Here we use stochastic sampling approaches, directly drawing samples from the posterior distribution of the parameters. The posterior distribution is given by Bayes' theorem as:
 
@@ -324,7 +324,7 @@ Finally, for numerical precision reasons, to avoid product of small numbers, the
 
 Since the natural logarithm is a one-to-one mapping and is invertible, this will not affect the final result of the sampling, i.e. estimates of $\alpha$ and $\beta$.
 
-\subsection*{Sampling Methods}
+\section{Sampling Methods}
 
 Here, multiple Markov Chains Monte-Carlo (MCMC) sampling algorithms were used. The first is the Metropolis-Hastings (MH) algorithm described below. One of the good things of the MH algorithm is that it does not require us to know the normalised target distribution.
 
@@ -369,12 +369,13 @@ Second, the slice sampling algorithm is used. This algorithm is also a MCMC algo
     Where $S$ is the slice for which $\{l: y_{0} < (l_{i}|\{x_{k}\})\}$, and $P(l_{i}|\{x_{k}\})$ is the posterior distribution.
 \end{definitionbox}
 
+\vspace*{1\baselineskip}
 The issue that arises with simple slice sampling here is that the stepping out procedure has no guarantee of finding the entire slice S, especially in case of multimodal distributions. This is where the software package used, \texttt{zeus}, comes in. \texttt{zeus} is a Python package that implements a more sophisticated version of slice sampling, called Ensemble Slice Sampler. As its name suggests, it uses an ensemble of walkers to sample from the posterior distribution, each with a different starting point. This minimises the chances of the total chain sampled missing an entire mode of the posterior distribution \cite{karamanis_zeus}.
 
 
-\subsection*{Results}
+\section{Results}
 
-\subsubsection*{Metropolis-Hastings}
+\subsection{Metropolis-Hastings}
 
 
 The total acceptance fraction for the chain was 0.27555, which is reasonable for the MH algorithm. In order to reflect the a priori knowledge we had of the position of the lighthouse, the initial position of the chain was set randomly, following a uniform distribution in between the set limits. This, however, meant the chain would have to converge first to the region of high probability, which requires us to ignore the first few samples of the chain. To check how many samples it took for the chain to converge, a plot of the first 1000 samples was made.
@@ -402,7 +403,7 @@ Fig. \ref{fig:MH_samples} shows a corner plot of the samples generated using the
     \hat{\alpha}_{MH} = -0.4428 \pm 0.5977 \text{ and } \hat{\beta}_{MH} = 1.9595 \pm 0.6669
 \end{equation}
 
-\subsubsection*{\texttt{zeus} Ensemble Slice Sampler}
+\subsection{\texttt{zeus} Ensemble Slice Sampler}
 
 Using \texttt{zeus}, the acceptance rate is always 1, as mentioned earlier. Similarly, starting locations were randomly sampled from the prior distributions. 10,000 samples were generated, for 10 walkers. Looking at a plot of the chain in Fig. \ref{fig:SS_convergence}, it is clear that the chain converges much quicker than MH, and staying conservative, the burn-in period was set to be 100 steps. This can be attributed to the nature of slice sampling, which allows for much bigger steps to be taken as they will always be under the curve of the posterior distribution.
 
@@ -432,7 +433,7 @@ Giving the following estimates for $\alpha$ and $\beta$:
     \hat{\alpha}_{SS} = -0.4558 \pm 0.6038 \text{ and } \hat{\beta}_{SS} = 1.9678 \pm 0.6757
 \end{equation}
 
-\section*{(vi) Prior for the Intensity $I_{0}$ Parameter}
+\chapter{(vi) Prior for the Intensity $I_{0}$ Parameter}
 
 Again, the prior describing the knowledge we have about the intensity $I_{0}$. Because the intensity is a physical property of the lighthouse, it would be useful for it to be scale invariant. That is, the prior should be invariant under a change of units:
 
@@ -447,10 +448,10 @@ This is equivalent to having:
 \end{equation}
 
 
-\section*{(vii) Stochastic Sampling, with the added Intensity $I_{0}$ Parameter}
+\chapter{(vii) Stochastic Sampling, with the added Intensity $I_{0}$ Parameter}
 
 
-\subsection*{Defining the Posterior}
+\section{Defining the Posterior}
 
 The likelihood for the measured intensity $I$ is given by a log-normal distribution with uncertainty $\sigma = 1$/ The expectation $\mu$ given by the inverse square law, and therefore depending on $x$, $\alpha$ and $\beta$, such that $\mu = \log(I_{0}/((x - \alpha)^{2} + \beta^{2}))$. The log-likelihood for the measured intensity $I$ is then given by:
 
@@ -476,13 +477,13 @@ Thus the log posterior is given by:
     \ln(P(\alpha, \beta, I_{0} | \{x_{k}\}, \{\log I_{k}\})) = \ln(\mathcal{L}_{x, I}(\{x_{k}\}, \{\log I_{k}\} | \alpha, \beta, I_{0})) + \ln(\pi(\alpha, \beta, I_{0}))
 \end{equation}
 
-\subsection*{Sampling Methods}
+\section{Sampling Methods}
 
 The same three MCMC algorithms were used to sample from the posterior distribution of the parameters. The parameter limits set are the same for $\alpha$ and $\beta$, and the prior for $I_{0}$ is set to be between a near-zero value (0.0001) and 50. The Metropolis-Hastings and \texttt{zeus} Ensemble Slice Sampler algorithms were used as before, but with a larger number of samples generated (500,000) for the MH algorithm. The initial positions for the location parameters were obtained in the same way, with the intensity parameter being randomly sampled from the prior distribution as well.
 
-\subsection*{Results}
+\section{Results}
 
-\subsubsection*{Metropolis-Hastings}
+\subsection{Metropolis-Hastings}
 
 Due to the higher dimension, the total acceptance fraction for this chain was much lower than in part (v). With just 7.65\% of the total samples being accepted, this is still a reasonable amount though much worse than before. In case the burn-in was also worse in this context, the first steps of the chain were once again plotted to check when the chain converged.
 
@@ -508,7 +509,7 @@ Taking the sample mean and standard deviation of the samples, estimates of the l
     \hat{\alpha}_{MH} = -0.1821 \pm 0.3311 \text{ and } \hat{\beta}_{MH} = 1.5193 \pm 0.3608 \text{ and } \hat{I}_{0} = 3.7809 \pm 1.2880
 \end{equation}
 
-\subsubsection*{\texttt{zeus} Ensemble Slice Sampler}
+\subsection{\texttt{zeus} Ensemble Slice Sampler}
 
 Again, using \texttt{zeus}, the acceptance rate is always 1. Looking at a plot of the chain in Fig. \ref{fig:SS_convergence_vii}, it once again converges much quicker than MH. So the burn-in is kept at 100 steps.
 
@@ -538,7 +539,7 @@ Giving the following estimates for $\alpha$ and $\beta$:
 \end{equation}
 
 
-\section*{(viii) Comparison of the results}
+\chapter{(viii) Comparison of the results}
 
 First off, it is reassuring that the estimates of the 2 algorithms are very close. Adding the intensity measurement and parameter to the estimation does lead to a change in the values of $\alpha$ and $\beta$. More importantly the uncertainties do decrease, which does bring more confidence to the estimates.
 

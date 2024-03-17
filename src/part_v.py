@@ -96,7 +96,7 @@ print("The acceptance fraction is for the Metropolis Hastings algorithm is:")
 print(accept_frac_MH)
 
 # Plot the chain to see the burn-in
-funcs.plot_chain(chain_MH, 1000, ndim, "MH")
+funcs.plot_chain(chain_MH, 1500, ndim, "MH")
 
 burn_in = 1000
 
