@@ -1,12 +1,15 @@
 """!@file funcs.py
 @brief Module containing functions to define the distributions, prior and
-posterior for the lighthouse problem, and to plot the distributions, and results
+posterior for the lighthouse problem, the metropolis-hastings algorithm,
+and to plot the distributions, and results
 
 @details This module contains tools to define the lighthouse problem, and to
 plot the distributions, and results. It contains 3 functions that define the
-lighthouse Cauchy distribution, the log likelihood, and the log prior. It also
-contains a function to plot the lighthouse Cauchy distribution.
-
+lighthouse Cauchy distribution, the log likelihood, and the log prior.
+It also contains a function to run the Metropolis-Hastings algorithm.
+Finally, it contains functions to plot the lighthouse Cauchy distribution,
+the lighthouse problem, the corner plot of the chain, the chain of samples,
+and the Gelman-Rubin statistic.
 
 @author Created by T.Breitburd on 13/03/2024
 """
@@ -42,13 +45,13 @@ intensity_0_max = 50
 def lighthouse_cauchy(alpha, beta, x):
     """!@brief Calculate the lighthouse Cauchy distribution
 
-    @details This function takes in the parameters alpha and beta, and the
-    position x, and returns the probability density function of the lighthouse
+    @details This function takes in the parameters alpha and beta, and the flash
+    location x, and returns the probability density function of the lighthouse
     Cauchy distribution.
 
-    @param alpha The position of the lighthouse
-    @param beta The scale of the lighthouse
-    @param x The position of the flash
+    @param alpha The position of the lighthouse along the coast, float
+    @param beta The distance of the lighthouse to the coastline, positive float
+    @param x The position of the flash, float
 
     @return The probability density function of the lighthouse Cauchy distribution
     """
@@ -61,21 +64,21 @@ def log_likelihood_v(param):
     """!@brief Calculate the log likelihood of the lighthouse Cauchy distribution
 
     @details This function takes in the parameters alpha and beta, and the
-    position x, and returns the log likelihood of the lighthouse Cauchy
-    distribution.
+    position x, and returns the log likelihood of the flash Cauchy
+    distribution as the sum of the log of the flash Cauchy likelihood.
 
-    @param param The parameters alpha and beta
-    @param flash_locs The position of the flashes
+    @param param The parameters alpha and beta, tuple
+    @param flash_locs The position of the flashes, list
 
-    @return The log likelihood of the lighthouse Cauchy distribution
+    @return The log likelihood of the flash Cauchy distribution
     """
 
-    # Calculate the likelihood
     alpha, beta = param
     global flash_locs
-
     x = flash_locs
-    epsilon = 1e-10
+
+    # Calculate the likelihood
+    epsilon = 1e-10  # Small value to avoid log(0)
     likelihood = np.sum(
         [np.log(max(lighthouse_cauchy(alpha, beta, point), epsilon)) for point in x]
     )
@@ -84,7 +87,7 @@ def log_likelihood_v(param):
 
 
 def log_prior_v(param, alpha_lim, beta_lim):
-    """!@brief Calculate the log prior of the lighthouse Cauchy distribution
+    """!@brief Calculate the log joint prior of the lighthouse parameters
 
     @details This function takes in the parameters alpha and beta, and the
     limits for alpha and beta, and returns the log prior of the lighthouse
@@ -166,36 +169,14 @@ def Metropolis_Hastings(nsteps, ndim, log_posterior, cov, param_init):
     return chain, accept_frac
 
 
-def clean_chain(chain, burn_in, tau):
-    """!@brief Clean the chain of samples
-
-    @details This function takes in the chain of samples, the burn-in period,
-    and the correlation length, and returns the cleaned chain of samples.
-
-    @param chain The chain of samples
-    @param burn_in The burn-in period
-    @param tau The correlation length
-
-    @return The cleaned chain of samples
-    """
-
-    # Remove the burn-in period
-    chain = chain[burn_in:, :]
-
-    # Thin the chain
-    thinner = int(2 * tau)
-    chain = chain[::thinner, :]
-
-    return chain
-
-
 def gelman_rubin(chains, window_size, step_size, ndim):
     """!@brief Calculate the Gelman-Rubin statistic
 
     @details This function takes a number of chains fron the same algorithm started at
-    different initial values, removes the burn-in, and returns the Gelman-Rubin statistic,
+    different initial values, and returns the Gelman-Rubin statistic,
     which is a measure of convergence of the MCMC algorithm, by looking at the variance
-    between the chains and the variance within the chains.
+    between the chains and the variance within the chains. It uses a rolling window to calculate
+    the Gelman-Rubin statistic at different points in the chain.
 
     @param chains The chains of samples
     @param window_size The size of the window
@@ -248,8 +229,8 @@ def cauchy_clt(alpha, beta, sample_size):
     The code was obtained from Pedro Pessoa's blog:
     https://github.com/PessoaP/blog/tree/master/Lighthouse
 
-    @param alpha The position of the lighthouse
-    @param beta The scale of the lighthouse
+    @param alpha The position of the lighthouse along the coast
+    @param beta The distance of the lighthouse to the coastline
     @param sample_size The sample size, minimum 10,000
 
     @return The plot of the central limit theorem for the Cauchy distribution
@@ -295,41 +276,59 @@ def cauchy_clt(alpha, beta, sample_size):
 
 
 def lighthouse_intensity(alpha, beta, intensity_0, x, log_intensity):
-    """!@brief Calculate the lighthouse Cauchy distribution
+    """!@brief Calculate the lighthouse Cauchy distribution with intensity
 
-    @details This function takes in the parameters alpha and beta, and the
+    @details This function takes in the parameters alpha, beta and intensity, and the
     position x, and returns the probability density function of the lighthouse
-    Cauchy distribution.
+    Cauchy distribution value for these.
 
-    @param alpha The position of the lighthouse
-    @param beta The scale of the lighthouse
-    @param intensity_0 The intensity of the flash at the lighthouse
-    @param x The position of the flash along the coastline
-    @param log_intensity The log of the intensity of the observed flash
+    @param alpha The position of the lighthouse, float
+    @param beta The scale of the lighthouse, positive float
+    @param intensity_0 The intensity of the flash at the lighthouse, positive float
+    @param x The position of the flash along the coastline, float
+    @param log_intensity The log of the intensity of the observed flash, float
 
     @return The probability density function of the lighthouse Cauchy distribution
     """
+
+    # Set some variables
     sigma = 1
     d_squared = ((x - alpha) ** 2) + (beta**2)
     denominator = np.sqrt(2 * np.pi * (sigma**2))
 
     if intensity_0 <= 0:
-        return 0  # Return 0 if intensity_0 is non-positive
+        return 0  # Return 0 if intensity_0 is non-positive at some point in the chain
 
+    # Calculate the probability density function
     expo_term = -((log_intensity - np.log(intensity_0) + np.log(d_squared)) ** 2) / (
         2 * (sigma**2)
     )
     pdf = np.exp(expo_term) / denominator
+
     return pdf
 
 
 def log_likelihood_vii(param):
+    """!@brief Calculate the log likelihood of the lighthouse Cauchy distribution
+
+    @details This function takes in the parameters alpha, beta, and intensity_0,
+    and returns the log likelihood of the flash location and intensity,
+    as the sum of the log of the flash Cauchy likelihood and the log of the
+    intensity likelihood.
+
+    @param param The parameters alpha, beta, and intensity_0
+
+    @return The log likelihood of the flash Cauchy distribution
+    """
+
+    # Set some variables
     alpha, beta, intensity_0 = param
     global data
     global flash_locs
     x = flash_locs
     epsilon = 1e-10
 
+    # Calculate the likelihood
     likelihood = np.sum(
         [np.log(max(lighthouse_cauchy(alpha, beta, point), epsilon)) for point in x]
     ) + np.sum(
@@ -350,7 +349,7 @@ def log_likelihood_vii(param):
 
 
 def log_prior_vii(param, alpha_lim, beta_lim, intensity_0_max, intensity_0_min):
-    """!@brief Calculate the log prior of the lighthouse Cauchy distribution
+    """!@brief Calculate the log prior of the lighthouse Cauchy distribution with intensity
 
     @details This function takes in the parameters alpha and beta, and the
     limits for alpha and beta, and returns the log prior of the lighthouse
