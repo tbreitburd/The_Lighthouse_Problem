@@ -309,7 +309,7 @@ def lighthouse_intensity(alpha, beta, intensity_0, x, log_intensity):
 
 
 def log_likelihood_vii(param):
-    """!@brief Calculate the log likelihood of the lighthouse Cauchy distribution
+    """!@brief Calculate the log likelihood of the flashes location and intensity
 
     @details This function takes in the parameters alpha, beta, and intensity_0,
     and returns the log likelihood of the flash location and intensity,
@@ -318,7 +318,7 @@ def log_likelihood_vii(param):
 
     @param param The parameters alpha, beta, and intensity_0
 
-    @return The log likelihood of the flash Cauchy distribution
+    @return The log likelihood of the flashes location and intensity
     """
 
     # Set some variables
@@ -349,17 +349,20 @@ def log_likelihood_vii(param):
 
 
 def log_prior_vii(param, alpha_lim, beta_lim, intensity_0_max, intensity_0_min):
-    """!@brief Calculate the log prior of the lighthouse Cauchy distribution with intensity
+    """!@brief Calculate the log prior of the lighthouse parameter distribution with intensity
 
     @details This function takes in the parameters alpha and beta, and the
     limits for alpha and beta, and returns the log prior of the lighthouse
     Cauchy distribution.
 
-    @param param The parameters alpha and beta
-    @param alpha_lim The limit for alpha
-    @param beta_lim The limit for beta
+    @param param The parameters alpha and beta, and intensity_0, tuple
+    @param alpha_lim The limit for alpha, float
+    @param beta_lim The limit for beta, float positive
+    @param intensity_0_max The maximum intensity, float positive
+    @param intensity_0_min The minimum intensity, float positive
 
-    @return The log prior of the lighthouse Cauchy distribution
+
+    @return The log prior of the lighthouse parameter distribution with intensity
     """
 
     alpha, beta, intensity_0 = param
@@ -382,7 +385,7 @@ def log_prior_vii(param, alpha_lim, beta_lim, intensity_0_max, intensity_0_min):
 
 
 def log_posterior_vii(param):
-    """!@brief Calculate the log posterior of the lighthouse parameters
+    """!@brief Calculate the log posterior of the lighthouse parameters with intensity
 
     @details This function takes in the parameters alpha, beta, and I_0,
     evaluates the log likelihood of the flash location and intensity,
@@ -408,7 +411,7 @@ def log_posterior_vii(param):
 
 
 def plot_lighthouse_cauchy(alpha, beta, x):
-    """!@brief Plot the lighthouse Cauchy distribution
+    """!@brief Plot the lighthouse flash location Cauchy distribution
 
     @details This function takes in the parameters alpha and beta, and the
     position x, and plots the lighthouse Cauchy distribution.
@@ -417,7 +420,7 @@ def plot_lighthouse_cauchy(alpha, beta, x):
     @param beta The scale of the lighthouse
     @param x The position of the flash
 
-    @return The plot of the lighthouse Cauchy distribution
+    @return The plot of the lighthouse location Cauchy distribution
     """
     pdf = lighthouse_cauchy(alpha, beta, x)
     plt.plot(x, pdf, label=r"$\alpha = {}, \beta = {}$".format(alpha, beta))
@@ -437,7 +440,7 @@ def plot_lighthouse_cauchy(alpha, beta, x):
 
 
 def plot_lighthouse(flashes, lighthouse_location):
-    """!@brief Plot the lighthouse problem
+    """!@brief Plot the lighthouse problem diagram
 
     @details This function takes in the observed position of the flashes
     and a hypothetical location of the lighthouse,
@@ -446,7 +449,7 @@ def plot_lighthouse(flashes, lighthouse_location):
     @param flashes The observed position of the flashes
     @param lighthouse_location The hypothetical location of the lighthouse
 
-    @return The plot of the lighthouse problem
+    @return The plot of the lighthouse problem diagram
     """
 
     # Plot the sea and coast
@@ -517,16 +520,16 @@ def plot_lighthouse(flashes, lighthouse_location):
 
 
 def plot_corner(chain, ndim, algorithm):
-    """!@brief Plot the corner plot of the chain
+    """!@brief Plot the cornerplot of the chain
 
     @details This function takes in the chain of samples from the chosen algorithm,
-    and plots the corner plot of the chain.
+    the number of dimensions of the chain, and plots the corner plot of the chain.
 
     @param chain The chain of samples
     @param ndim The number of dimensions
     @param algorithm The chosen algorithm
 
-    @return The corner plot of the chain
+    @return The cornerplot of the chain
     """
 
     # Change chain to pandas dataframe
@@ -559,14 +562,15 @@ def plot_chain(chain, nsteps, ndim, algorithm):
     """!@brief Plot the chain of samples
 
     @details This function takes in the chain of samples from the chosen algorithm,
-    the number of steps to check, and the chosen algorithm, and plots the chain of samples.
+    the number of steps to check, the number of dimensions of the chain, and the chosen algorithm,
+    and plots the chains of each component of samples.
 
     @param chain The chain of samples
     @param nsteps The number of steps
     @param ndim The number of dimensions
     @param algorithm The chosen algorithm
 
-    @return The chain of samples
+    @return The chain of sample components
     """
 
     # Plot the chain of samples
@@ -602,8 +606,8 @@ def plot_chain(chain, nsteps, ndim, algorithm):
 def plot_gelman_rubin(R_hat, ndim, algorithm):
     """!@brief Plot the Gelman-Rubin statistic
 
-    @details This function takes in the Gelman-Rubin statistic,
-    and plots the Gelman-Rubin statistic.
+    @details This function takes in the computed Gelman-Rubin statistic array,
+    the number of dimensions, and the chosen algorithm, and plots the Gelman-Rubin statistic.
 
     @param R_hat The Gelman-Rubin statistic
     @param ndim The number of dimensions
