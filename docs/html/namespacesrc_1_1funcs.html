@@ -89,7 +89,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a3b9849546e8a90c19e19fdca87dd3641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log likelihood of the lighthouse Cauchy distribution.  <br /></td></tr>
 <tr class="separator:a3b9849546e8a90c19e19fdca87dd3641"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6344ea504fa8a128b4beb4e8a3b9df61" id="r_a6344ea504fa8a128b4beb4e8a3b9df61"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a6344ea504fa8a128b4beb4e8a3b9df61">log_prior_v</a> (param, <a class="el" href="namespacesrc_1_1funcs.html#abf961078ccdba939c3b76d69f3d7ac64">alpha_lim</a>, <a class="el" href="namespacesrc_1_1funcs.html#a60aa262403a7f00ab2fd786f305188d6">beta_lim</a>)</td></tr>
-<tr class="memdesc:a6344ea504fa8a128b4beb4e8a3b9df61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log prior of the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:a6344ea504fa8a128b4beb4e8a3b9df61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log joint prior of the lighthouse parameters.  <br /></td></tr>
 <tr class="separator:a6344ea504fa8a128b4beb4e8a3b9df61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33963d80d2187599c8b0d35283c4621a" id="r_a33963d80d2187599c8b0d35283c4621a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a33963d80d2187599c8b0d35283c4621a">log_posterior_v</a> (param)</td></tr>
 <tr class="memdesc:a33963d80d2187599c8b0d35283c4621a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log posterior of the lighthouse Cauchy distribution.  <br /></td></tr>
@@ -97,9 +97,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ae71a55ee396feb92dd3e72217f42312e" id="r_ae71a55ee396feb92dd3e72217f42312e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#ae71a55ee396feb92dd3e72217f42312e">Metropolis_Hastings</a> (nsteps, ndim, log_posterior, cov, param_init)</td></tr>
 <tr class="memdesc:ae71a55ee396feb92dd3e72217f42312e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the Metropolis-Hastings algorithm.  <br /></td></tr>
 <tr class="separator:ae71a55ee396feb92dd3e72217f42312e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4b0d3d488e05bb8bd626d02310e3cf5" id="r_ab4b0d3d488e05bb8bd626d02310e3cf5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#ab4b0d3d488e05bb8bd626d02310e3cf5">clean_chain</a> (chain, burn_in, tau)</td></tr>
-<tr class="memdesc:ab4b0d3d488e05bb8bd626d02310e3cf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean the chain of samples.  <br /></td></tr>
-<tr class="separator:ab4b0d3d488e05bb8bd626d02310e3cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48153258104c01a12c58ba92b2b4a98f" id="r_a48153258104c01a12c58ba92b2b4a98f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a48153258104c01a12c58ba92b2b4a98f">gelman_rubin</a> (chains, window_size, step_size, ndim)</td></tr>
 <tr class="memdesc:a48153258104c01a12c58ba92b2b4a98f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the Gelman-Rubin statistic.  <br /></td></tr>
 <tr class="separator:a48153258104c01a12c58ba92b2b4a98f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -107,24 +104,25 @@ Functions</h2></td></tr>
 <tr class="memdesc:add25bb2025539dded73444631f94262f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the central limit theorem for the Cauchy distribution.  <br /></td></tr>
 <tr class="separator:add25bb2025539dded73444631f94262f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96f14d3f728878d82146cec4ad0c50eb" id="r_a96f14d3f728878d82146cec4ad0c50eb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a96f14d3f728878d82146cec4ad0c50eb">lighthouse_intensity</a> (alpha, beta, intensity_0, x, log_intensity)</td></tr>
-<tr class="memdesc:a96f14d3f728878d82146cec4ad0c50eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:a96f14d3f728878d82146cec4ad0c50eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the lighthouse Cauchy distribution with intensity.  <br /></td></tr>
 <tr class="separator:a96f14d3f728878d82146cec4ad0c50eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b20f54e3fb6abf15013d2b21c9fbc47" id="r_a8b20f54e3fb6abf15013d2b21c9fbc47"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a8b20f54e3fb6abf15013d2b21c9fbc47">log_likelihood_vii</a> (param)</td></tr>
+<tr class="memdesc:a8b20f54e3fb6abf15013d2b21c9fbc47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log likelihood of the flashes location and intensity.  <br /></td></tr>
 <tr class="separator:a8b20f54e3fb6abf15013d2b21c9fbc47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9a1775ca511b7827e16a344c88269a2" id="r_af9a1775ca511b7827e16a344c88269a2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#af9a1775ca511b7827e16a344c88269a2">log_prior_vii</a> (param, <a class="el" href="namespacesrc_1_1funcs.html#abf961078ccdba939c3b76d69f3d7ac64">alpha_lim</a>, <a class="el" href="namespacesrc_1_1funcs.html#a60aa262403a7f00ab2fd786f305188d6">beta_lim</a>, <a class="el" href="namespacesrc_1_1funcs.html#a4d077fa2388f7bebfd445d54d673d101">intensity_0_max</a>, <a class="el" href="namespacesrc_1_1funcs.html#a3fb7c3afb954cd3620dfbf0c7062afcf">intensity_0_min</a>)</td></tr>
-<tr class="memdesc:af9a1775ca511b7827e16a344c88269a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log prior of the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:af9a1775ca511b7827e16a344c88269a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log prior of the lighthouse parameter distribution with intensity.  <br /></td></tr>
 <tr class="separator:af9a1775ca511b7827e16a344c88269a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18625d27adf0dca6812b178baf545139" id="r_a18625d27adf0dca6812b178baf545139"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a18625d27adf0dca6812b178baf545139">log_posterior_vii</a> (param)</td></tr>
-<tr class="memdesc:a18625d27adf0dca6812b178baf545139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log posterior of the lighthouse parameters.  <br /></td></tr>
+<tr class="memdesc:a18625d27adf0dca6812b178baf545139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log posterior of the lighthouse parameters with intensity.  <br /></td></tr>
 <tr class="separator:a18625d27adf0dca6812b178baf545139"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1944cc18d7382bc27b0030872baed692" id="r_a1944cc18d7382bc27b0030872baed692"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a1944cc18d7382bc27b0030872baed692">plot_lighthouse_cauchy</a> (alpha, beta, x)</td></tr>
-<tr class="memdesc:a1944cc18d7382bc27b0030872baed692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:a1944cc18d7382bc27b0030872baed692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse flash location Cauchy distribution.  <br /></td></tr>
 <tr class="separator:a1944cc18d7382bc27b0030872baed692"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78a4cffc5e504a2a5ee427ee12b023b9" id="r_a78a4cffc5e504a2a5ee427ee12b023b9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a78a4cffc5e504a2a5ee427ee12b023b9">plot_lighthouse</a> (flashes, lighthouse_location)</td></tr>
-<tr class="memdesc:a78a4cffc5e504a2a5ee427ee12b023b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse problem.  <br /></td></tr>
+<tr class="memdesc:a78a4cffc5e504a2a5ee427ee12b023b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse problem diagram.  <br /></td></tr>
 <tr class="separator:a78a4cffc5e504a2a5ee427ee12b023b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2eb1503ee74cdc316a1ba945c2309dae" id="r_a2eb1503ee74cdc316a1ba945c2309dae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a2eb1503ee74cdc316a1ba945c2309dae">plot_corner</a> (chain, ndim, algorithm)</td></tr>
-<tr class="memdesc:a2eb1503ee74cdc316a1ba945c2309dae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the corner plot of the chain.  <br /></td></tr>
+<tr class="memdesc:a2eb1503ee74cdc316a1ba945c2309dae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the cornerplot of the chain.  <br /></td></tr>
 <tr class="separator:a2eb1503ee74cdc316a1ba945c2309dae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4ab069994952c26a5e10060354038a8" id="r_ac4ab069994952c26a5e10060354038a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#ac4ab069994952c26a5e10060354038a8">plot_chain</a> (chain, nsteps, ndim, algorithm)</td></tr>
 <tr class="memdesc:ac4ab069994952c26a5e10060354038a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the chain of samples.  <br /></td></tr>
@@ -191,59 +189,13 @@ Variables</h2></td></tr>
 <p>This function takes in the parameters alpha and beta, and the sample size, and plots the central limit theorem for the Cauchy distribution. The code was obtained from Pedro Pessoa's blog: <a href="https://github.com/PessoaP/blog/tree/master/Lighthouse">https://github.com/PessoaP/blog/tree/master/Lighthouse</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alpha</td><td>The position of the lighthouse </td></tr>
-    <tr><td class="paramname">beta</td><td>The scale of the lighthouse </td></tr>
+    <tr><td class="paramname">alpha</td><td>The position of the lighthouse along the coast </td></tr>
+    <tr><td class="paramname">beta</td><td>The distance of the lighthouse to the coastline </td></tr>
     <tr><td class="paramname">sample_size</td><td>The sample size, minimum 10,000</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The plot of the central limit theorem for the Cauchy distribution </dd></dl>
-
-</div>
-</div>
-<a id="ab4b0d3d488e05bb8bd626d02310e3cf5" name="ab4b0d3d488e05bb8bd626d02310e3cf5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4b0d3d488e05bb8bd626d02310e3cf5">&#9670;&#160;</a></span>clean_chain()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">src.funcs.clean_chain </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>chain</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>burn_in</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>tau</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Clean the chain of samples. </p>
-<p>This function takes in the chain of samples, the burn-in period, and the correlation length, and returns the cleaned chain of samples.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">chain</td><td>The chain of samples </td></tr>
-    <tr><td class="paramname">burn_in</td><td>The burn-in period </td></tr>
-    <tr><td class="paramname">tau</td><td>The correlation length</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The cleaned chain of samples </dd></dl>
 
 </div>
 </div>
@@ -286,7 +238,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Calculate the Gelman-Rubin statistic. </p>
-<p>This function takes a number of chains fron the same algorithm started at different initial values, removes the burn-in, and returns the Gelman-Rubin statistic, which is a measure of convergence of the MCMC algorithm, by looking at the variance between the chains and the variance within the chains.</p>
+<p>This function takes a number of chains fron the same algorithm started at different initial values, and returns the Gelman-Rubin statistic, which is a measure of convergence of the MCMC algorithm, by looking at the variance between the chains and the variance within the chains. It uses a rolling window to calculate the Gelman-Rubin statistic at different points in the chain.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">chains</td><td>The chains of samples </td></tr>
@@ -333,12 +285,12 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Calculate the lighthouse Cauchy distribution. </p>
-<p>This function takes in the parameters alpha and beta, and the position x, and returns the probability density function of the lighthouse Cauchy distribution.</p>
+<p>This function takes in the parameters alpha and beta, and the flash location x, and returns the probability density function of the lighthouse Cauchy distribution.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alpha</td><td>The position of the lighthouse </td></tr>
-    <tr><td class="paramname">beta</td><td>The scale of the lighthouse </td></tr>
-    <tr><td class="paramname">x</td><td>The position of the flash</td></tr>
+    <tr><td class="paramname">alpha</td><td>The position of the lighthouse along the coast, float </td></tr>
+    <tr><td class="paramname">beta</td><td>The distance of the lighthouse to the coastline, positive float </td></tr>
+    <tr><td class="paramname">x</td><td>The position of the flash, float</td></tr>
   </table>
   </dd>
 </dl>
@@ -390,15 +342,15 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate the lighthouse Cauchy distribution. </p>
-<p>This function takes in the parameters alpha and beta, and the position x, and returns the probability density function of the lighthouse Cauchy distribution.</p>
+<p>Calculate the lighthouse Cauchy distribution with intensity. </p>
+<p>This function takes in the parameters alpha, beta and intensity, and the position x, and returns the probability density function of the lighthouse Cauchy distribution value for these.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alpha</td><td>The position of the lighthouse </td></tr>
-    <tr><td class="paramname">beta</td><td>The scale of the lighthouse </td></tr>
-    <tr><td class="paramname">intensity_0</td><td>The intensity of the flash at the lighthouse </td></tr>
-    <tr><td class="paramname">x</td><td>The position of the flash along the coastline </td></tr>
-    <tr><td class="paramname">log_intensity</td><td>The log of the intensity of the observed flash</td></tr>
+    <tr><td class="paramname">alpha</td><td>The position of the lighthouse, float </td></tr>
+    <tr><td class="paramname">beta</td><td>The scale of the lighthouse, positive float </td></tr>
+    <tr><td class="paramname">intensity_0</td><td>The intensity of the flash at the lighthouse, positive float </td></tr>
+    <tr><td class="paramname">x</td><td>The position of the flash along the coastline, float </td></tr>
+    <tr><td class="paramname">log_intensity</td><td>The log of the intensity of the observed flash, float</td></tr>
   </table>
   </dd>
 </dl>
@@ -423,15 +375,15 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Calculate the log likelihood of the lighthouse Cauchy distribution. </p>
-<p>This function takes in the parameters alpha and beta, and the position x, and returns the log likelihood of the lighthouse Cauchy distribution.</p>
+<p>This function takes in the parameters alpha and beta, and the position x, and returns the log likelihood of the flash Cauchy distribution as the sum of the log of the flash Cauchy likelihood.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">param</td><td>The parameters alpha and beta </td></tr>
-    <tr><td class="paramname">flash_locs</td><td>The position of the flashes</td></tr>
+    <tr><td class="paramname">param</td><td>The parameters alpha and beta, tuple </td></tr>
+    <tr><td class="paramname">flash_locs</td><td>The position of the flashes, list</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The log likelihood of the lighthouse Cauchy distribution </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The log likelihood of the flash Cauchy distribution </dd></dl>
 
 </div>
 </div>
@@ -450,6 +402,16 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Calculate the log likelihood of the flashes location and intensity. </p>
+<p>This function takes in the parameters alpha, beta, and intensity_0, and returns the log likelihood of the flash location and intensity, as the sum of the log of the flash Cauchy likelihood and the log of the intensity likelihood.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">param</td><td>The parameters alpha, beta, and intensity_0</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The log likelihood of the flashes location and intensity </dd></dl>
 
 </div>
 </div>
@@ -498,7 +460,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate the log posterior of the lighthouse parameters. </p>
+<p>Calculate the log posterior of the lighthouse parameters with intensity. </p>
 <p>This function takes in the parameters alpha, beta, and I_0, evaluates the log likelihood of the flash location and intensity, as well as the log joint prior distribution of the lighthouse parameters, and returns the log posterior of the lighthouse parameters.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -542,7 +504,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate the log prior of the lighthouse Cauchy distribution. </p>
+<p>Calculate the log joint prior of the lighthouse parameters. </p>
 <p>This function takes in the parameters alpha and beta, and the limits for alpha and beta, and returns the log prior of the lighthouse Cauchy distribution.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -600,17 +562,19 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate the log prior of the lighthouse Cauchy distribution. </p>
+<p>Calculate the log prior of the lighthouse parameter distribution with intensity. </p>
 <p>This function takes in the parameters alpha and beta, and the limits for alpha and beta, and returns the log prior of the lighthouse Cauchy distribution.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">param</td><td>The parameters alpha and beta </td></tr>
-    <tr><td class="paramname">alpha_lim</td><td>The limit for alpha </td></tr>
-    <tr><td class="paramname">beta_lim</td><td>The limit for beta</td></tr>
+    <tr><td class="paramname">param</td><td>The parameters alpha and beta, and intensity_0, tuple </td></tr>
+    <tr><td class="paramname">alpha_lim</td><td>The limit for alpha, float </td></tr>
+    <tr><td class="paramname">beta_lim</td><td>The limit for beta, float positive </td></tr>
+    <tr><td class="paramname">intensity_0_max</td><td>The maximum intensity, float positive </td></tr>
+    <tr><td class="paramname">intensity_0_min</td><td>The minimum intensity, float positive</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The log prior of the lighthouse Cauchy distribution </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The log prior of the lighthouse parameter distribution with intensity </dd></dl>
 
 </div>
 </div>
@@ -713,7 +677,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Plot the chain of samples. </p>
-<p>This function takes in the chain of samples from the chosen algorithm, the number of steps to check, and the chosen algorithm, and plots the chain of samples.</p>
+<p>This function takes in the chain of samples from the chosen algorithm, the number of steps to check, the number of dimensions of the chain, and the chosen algorithm, and plots the chains of each component of samples.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">chain</td><td>The chain of samples </td></tr>
@@ -723,7 +687,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The chain of samples </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The chain of sample components </dd></dl>
 
 </div>
 </div>
@@ -759,8 +723,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Plot the corner plot of the chain. </p>
-<p>This function takes in the chain of samples from the chosen algorithm, and plots the corner plot of the chain.</p>
+<p>Plot the cornerplot of the chain. </p>
+<p>This function takes in the chain of samples from the chosen algorithm, the number of dimensions of the chain, and plots the corner plot of the chain.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">chain</td><td>The chain of samples </td></tr>
@@ -769,7 +733,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The corner plot of the chain </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The cornerplot of the chain </dd></dl>
 
 </div>
 </div>
@@ -806,7 +770,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Plot the Gelman-Rubin statistic. </p>
-<p>This function takes in the Gelman-Rubin statistic, and plots the Gelman-Rubin statistic.</p>
+<p>This function takes in the computed Gelman-Rubin statistic array, the number of dimensions, and the chosen algorithm, and plots the Gelman-Rubin statistic.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">R_hat</td><td>The Gelman-Rubin statistic </td></tr>
@@ -845,7 +809,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Plot the lighthouse problem. </p>
+<p>Plot the lighthouse problem diagram. </p>
 <p>This function takes in the observed position of the flashes and a hypothetical location of the lighthouse, and plots the lighthouse problem.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -854,7 +818,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The plot of the lighthouse problem </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The plot of the lighthouse problem diagram </dd></dl>
 
 </div>
 </div>
@@ -890,7 +854,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Plot the lighthouse Cauchy distribution. </p>
+<p>Plot the lighthouse flash location Cauchy distribution. </p>
 <p>This function takes in the parameters alpha and beta, and the position x, and plots the lighthouse Cauchy distribution.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -900,7 +864,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The plot of the lighthouse Cauchy distribution </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The plot of the lighthouse location Cauchy distribution </dd></dl>
 
 </div>
 </div>

@@ -81,7 +81,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Module containing functions to define the distributions, prior and posterior for the lighthouse problem, and to plot the distributions, and results.
+<p>Module containing functions to define the distributions, prior and posterior for the lighthouse problem, the metropolis-hastings algorithm, and to plot the distributions, and results.
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -100,7 +100,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a3b9849546e8a90c19e19fdca87dd3641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log likelihood of the lighthouse Cauchy distribution.  <br /></td></tr>
 <tr class="separator:a3b9849546e8a90c19e19fdca87dd3641"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6344ea504fa8a128b4beb4e8a3b9df61" id="r_a6344ea504fa8a128b4beb4e8a3b9df61"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a6344ea504fa8a128b4beb4e8a3b9df61">src.funcs.log_prior_v</a> (param, <a class="el" href="namespacesrc_1_1funcs.html#abf961078ccdba939c3b76d69f3d7ac64">alpha_lim</a>, <a class="el" href="namespacesrc_1_1funcs.html#a60aa262403a7f00ab2fd786f305188d6">beta_lim</a>)</td></tr>
-<tr class="memdesc:a6344ea504fa8a128b4beb4e8a3b9df61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log prior of the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:a6344ea504fa8a128b4beb4e8a3b9df61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log joint prior of the lighthouse parameters.  <br /></td></tr>
 <tr class="separator:a6344ea504fa8a128b4beb4e8a3b9df61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33963d80d2187599c8b0d35283c4621a" id="r_a33963d80d2187599c8b0d35283c4621a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a33963d80d2187599c8b0d35283c4621a">src.funcs.log_posterior_v</a> (param)</td></tr>
 <tr class="memdesc:a33963d80d2187599c8b0d35283c4621a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log posterior of the lighthouse Cauchy distribution.  <br /></td></tr>
@@ -108,9 +108,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ae71a55ee396feb92dd3e72217f42312e" id="r_ae71a55ee396feb92dd3e72217f42312e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#ae71a55ee396feb92dd3e72217f42312e">src.funcs.Metropolis_Hastings</a> (nsteps, ndim, log_posterior, cov, param_init)</td></tr>
 <tr class="memdesc:ae71a55ee396feb92dd3e72217f42312e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the Metropolis-Hastings algorithm.  <br /></td></tr>
 <tr class="separator:ae71a55ee396feb92dd3e72217f42312e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4b0d3d488e05bb8bd626d02310e3cf5" id="r_ab4b0d3d488e05bb8bd626d02310e3cf5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#ab4b0d3d488e05bb8bd626d02310e3cf5">src.funcs.clean_chain</a> (chain, burn_in, tau)</td></tr>
-<tr class="memdesc:ab4b0d3d488e05bb8bd626d02310e3cf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean the chain of samples.  <br /></td></tr>
-<tr class="separator:ab4b0d3d488e05bb8bd626d02310e3cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48153258104c01a12c58ba92b2b4a98f" id="r_a48153258104c01a12c58ba92b2b4a98f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a48153258104c01a12c58ba92b2b4a98f">src.funcs.gelman_rubin</a> (chains, window_size, step_size, ndim)</td></tr>
 <tr class="memdesc:a48153258104c01a12c58ba92b2b4a98f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the Gelman-Rubin statistic.  <br /></td></tr>
 <tr class="separator:a48153258104c01a12c58ba92b2b4a98f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -118,24 +115,25 @@ Functions</h2></td></tr>
 <tr class="memdesc:add25bb2025539dded73444631f94262f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the central limit theorem for the Cauchy distribution.  <br /></td></tr>
 <tr class="separator:add25bb2025539dded73444631f94262f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96f14d3f728878d82146cec4ad0c50eb" id="r_a96f14d3f728878d82146cec4ad0c50eb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a96f14d3f728878d82146cec4ad0c50eb">src.funcs.lighthouse_intensity</a> (alpha, beta, intensity_0, x, log_intensity)</td></tr>
-<tr class="memdesc:a96f14d3f728878d82146cec4ad0c50eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:a96f14d3f728878d82146cec4ad0c50eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the lighthouse Cauchy distribution with intensity.  <br /></td></tr>
 <tr class="separator:a96f14d3f728878d82146cec4ad0c50eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b20f54e3fb6abf15013d2b21c9fbc47" id="r_a8b20f54e3fb6abf15013d2b21c9fbc47"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a8b20f54e3fb6abf15013d2b21c9fbc47">src.funcs.log_likelihood_vii</a> (param)</td></tr>
+<tr class="memdesc:a8b20f54e3fb6abf15013d2b21c9fbc47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log likelihood of the flashes location and intensity.  <br /></td></tr>
 <tr class="separator:a8b20f54e3fb6abf15013d2b21c9fbc47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9a1775ca511b7827e16a344c88269a2" id="r_af9a1775ca511b7827e16a344c88269a2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#af9a1775ca511b7827e16a344c88269a2">src.funcs.log_prior_vii</a> (param, <a class="el" href="namespacesrc_1_1funcs.html#abf961078ccdba939c3b76d69f3d7ac64">alpha_lim</a>, <a class="el" href="namespacesrc_1_1funcs.html#a60aa262403a7f00ab2fd786f305188d6">beta_lim</a>, <a class="el" href="namespacesrc_1_1funcs.html#a4d077fa2388f7bebfd445d54d673d101">intensity_0_max</a>, <a class="el" href="namespacesrc_1_1funcs.html#a3fb7c3afb954cd3620dfbf0c7062afcf">intensity_0_min</a>)</td></tr>
-<tr class="memdesc:af9a1775ca511b7827e16a344c88269a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log prior of the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:af9a1775ca511b7827e16a344c88269a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log prior of the lighthouse parameter distribution with intensity.  <br /></td></tr>
 <tr class="separator:af9a1775ca511b7827e16a344c88269a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18625d27adf0dca6812b178baf545139" id="r_a18625d27adf0dca6812b178baf545139"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a18625d27adf0dca6812b178baf545139">src.funcs.log_posterior_vii</a> (param)</td></tr>
-<tr class="memdesc:a18625d27adf0dca6812b178baf545139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log posterior of the lighthouse parameters.  <br /></td></tr>
+<tr class="memdesc:a18625d27adf0dca6812b178baf545139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the log posterior of the lighthouse parameters with intensity.  <br /></td></tr>
 <tr class="separator:a18625d27adf0dca6812b178baf545139"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1944cc18d7382bc27b0030872baed692" id="r_a1944cc18d7382bc27b0030872baed692"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a1944cc18d7382bc27b0030872baed692">src.funcs.plot_lighthouse_cauchy</a> (alpha, beta, x)</td></tr>
-<tr class="memdesc:a1944cc18d7382bc27b0030872baed692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse Cauchy distribution.  <br /></td></tr>
+<tr class="memdesc:a1944cc18d7382bc27b0030872baed692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse flash location Cauchy distribution.  <br /></td></tr>
 <tr class="separator:a1944cc18d7382bc27b0030872baed692"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78a4cffc5e504a2a5ee427ee12b023b9" id="r_a78a4cffc5e504a2a5ee427ee12b023b9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a78a4cffc5e504a2a5ee427ee12b023b9">src.funcs.plot_lighthouse</a> (flashes, lighthouse_location)</td></tr>
-<tr class="memdesc:a78a4cffc5e504a2a5ee427ee12b023b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse problem.  <br /></td></tr>
+<tr class="memdesc:a78a4cffc5e504a2a5ee427ee12b023b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the lighthouse problem diagram.  <br /></td></tr>
 <tr class="separator:a78a4cffc5e504a2a5ee427ee12b023b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2eb1503ee74cdc316a1ba945c2309dae" id="r_a2eb1503ee74cdc316a1ba945c2309dae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#a2eb1503ee74cdc316a1ba945c2309dae">src.funcs.plot_corner</a> (chain, ndim, algorithm)</td></tr>
-<tr class="memdesc:a2eb1503ee74cdc316a1ba945c2309dae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the corner plot of the chain.  <br /></td></tr>
+<tr class="memdesc:a2eb1503ee74cdc316a1ba945c2309dae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the cornerplot of the chain.  <br /></td></tr>
 <tr class="separator:a2eb1503ee74cdc316a1ba945c2309dae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4ab069994952c26a5e10060354038a8" id="r_ac4ab069994952c26a5e10060354038a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesrc_1_1funcs.html#ac4ab069994952c26a5e10060354038a8">src.funcs.plot_chain</a> (chain, nsteps, ndim, algorithm)</td></tr>
 <tr class="memdesc:ac4ab069994952c26a5e10060354038a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plot the chain of samples.  <br /></td></tr>
@@ -166,8 +164,8 @@ Variables</h2></td></tr>
 <tr class="separator:a4d077fa2388f7bebfd445d54d673d101"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Module containing functions to define the distributions, prior and posterior for the lighthouse problem, and to plot the distributions, and results. </p>
-<p>This module contains tools to define the lighthouse problem, and to plot the distributions, and results. It contains 3 functions that define the lighthouse Cauchy distribution, the log likelihood, and the log prior. It also contains a function to plot the lighthouse Cauchy distribution.</p>
+<div class="textblock"><p>Module containing functions to define the distributions, prior and posterior for the lighthouse problem, the metropolis-hastings algorithm, and to plot the distributions, and results. </p>
+<p>This module contains tools to define the lighthouse problem, and to plot the distributions, and results. It contains 3 functions that define the lighthouse Cauchy distribution, the log likelihood, and the log prior. It also contains a function to run the Metropolis-Hastings algorithm. Finally, it contains functions to plot the lighthouse Cauchy distribution, the lighthouse problem, the corner plot of the chain, the chain of samples, and the Gelman-Rubin statistic.</p>
 <dl class="section author"><dt>Author</dt><dd>Created by T.Breitburd on 13/03/2024 </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
