@@ -557,6 +557,60 @@ Giving the following estimates for $\alpha$ and $\beta$:
 
 First off, it is reassuring that the estimates of the 2 algorithms are very close. Adding the intensity measurement and parameter to the estimation does lead to a change in the values of $\alpha$ and $\beta$. More importantly the uncertainties do decrease, which does bring more confidence to the estimates.
 
+
+\chapter{Appendix}
+
+\section{S2 Coursework - The Lighthouse Problem}
+
+\subsection{Description}
+This reporsitory contains the code and written report for the S2 Coursework. The aim was to solve the lighthouse problem, finding the location of a lighthouse given flash observation and some observation distributions.
+
+\subsection{Contents}
+
+Inside this \texttt{tmb76/} directory, there are a few sub-directories one can explore. There's the code directory (\texttt{src/}), which contains all the code used in the solver. An important note is that the code will give outputs in the command line but also store the plots in a \texttt{Plots/} directory which will be created as the first code file is run. So if there is no \texttt{Plots/} directory in the repository yet, running the solver once should lead to creating one. The last one is the \texttt{Report/} directory, which contains the LaTeX file for the report, as well as the pdf version of it, along with the references \texttt{.bib} file.
+More importantly, there are an \texttt{environment.yml} and \texttt{Dockerfile} files, which one is advised to use.
+
+\subsection{How to run the code}
+For permissions reasons, the \texttt{Dockerfile} is not set up to pull the repository directly as it builds the image. Therefore, one must first download this repository to their local machine and then are free to build the Docker image from the \texttt{Dockerfile}.
+
+To run the solver on a Docker container, one first has to build the image and run the container. This can be done as follows:
+
+\begin{lstlisting}[language=bash]
+$ docker build -t s2_coursework .
+$ docker run --rm -ti s2_coursework
+\end{lstlisting}
+
+The \texttt{s2\_coursework} is not a strict instruction, it can be set to any other name the user may prefer.
+
+If there is a need to get the plots back on the local machine, the second line above can be ran without the \texttt{--rm} and also set the container name using \texttt{--name=container\_name} (any valid name is fine). From there, run all the code as instructed below. Once all desired outputs and plots have been obtained. One can exit the container and then run:
+
+\begin{lstlisting}[language=bash]
+$ docker cp docker cp container_name:/S2_Coursework/Plots ./Plots
+\end{lstlisting}
+
+The \texttt{Plots/} directory will get copied into the local folder the container was ran from.
+
+As you run this, the Docker image will get built and the container ran, providing the user with a bash terminal-like interface where the solver code can be run as follows:
+
+\begin{lstlisting}[language=bash]
+$ python src/part_*.py
+\end{lstlisting}
+
+where \texttt{*} can be either \texttt{v} or \texttt{vii}. Each contain the code to get the results for part (v) and part (vii) of the coursework.
+
+Note on time: Running the \texttt{part\_v.py} file should take close to 2 minutes. Running the \texttt{part\_vii.py} file should take longer, closer to 5-6 minutes. This is based on running all of these on a MacBook Air M2 (2022, Ventura 13.2.1), with 8 GB of Memory, so this may be slower on a container.
+
+
+\subsection{Further development}
+
+If one wishes to further develop this code, such as adding more algorithms to try, when the image is built, git is installed and initialized and the pre-commit hooks are installed.
+
+\subsection{Use of Generative AI}
+
+GitHub Copilot's autocompletion feature was used in coding the project, when writing docstrings for the functions, though sometimes adding elements ourselves, and for repetitive parts of the code.
+ChatGPT was also used to help in debugging the code, by providing the traceback as a prompt when an error was difficult to understand, asking to explain what the error refers to. Additionally, it was used to get to grips with using the \texttt{zeus} package. Asked how one could set a random seed but no conclusive answer was given. Asked how one could define a rolling window loop for indices, to use when computing the gelman rubin statistics and was proposed with \texttt{for i in range(0, len(sequence) - window\_size + 1, step\_size):} which was used in the function but with the n\_samples argument instead of the \texttt{len(sequence)}. Finally, a recurrent issue was the invalid log values encountered with the log likelihood, log posterior and log prior definitions, and was returned the idea of setting a safety threshold in case of invalid values.
+
+
 \bibliographystyle{plain}
 \bibliography{refs.bib}
 
